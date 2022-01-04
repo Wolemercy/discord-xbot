@@ -1,0 +1,23 @@
+{
+  "name": "discord-xbot",
+  "version": "1.0.0",
+  "description": "A Discord Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wolemercy/discord-xbot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wolemercy/discord-xbot/issues"
+  },
+  "homepage": "https://github.com/Wolemercy/discord-xbot#readme",
+  "dependencies": {
+    "discord.js": "^13.5.0"
+  }
+}
