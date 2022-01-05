@@ -62,3 +62,4 @@ class ErrorHandler {
 const errorHandler = new ErrorHandler();
 
 export default errorHandler;
+export { BaseError, APIError, UnauthorizedError, NotFoundError };
