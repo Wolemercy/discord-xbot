@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import express, { Application, Response, Request, NextFunction } from 'express';
 import logger from './config/logger';
+import errorHandler from './config/error';
 const app: Application = express();
 
 /* LOG THE REQUEST */
@@ -46,5 +47,5 @@ process.on('unhandledRejection', (error: Error, promise) => {
 // Deals with programmer errors by exiting the node application
 process.on('uncaughtException', (error) => {
     logger.info('Uncaught Exception', error.message);
-    // errorHandler.handleError(error);
+    errorHandler.handleError(error);
 });
