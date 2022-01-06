@@ -1,0 +1,19 @@
+version: '3'
+services:
+    xBotCache:
+        image: 'redis:alpine'
+        volumes:
+            - 'redis:/data'
+        ports:
+            - '6379:6379'
+    xBotDB:
+        image: postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=user-db
+        ports:
+            - '5432:5432'
+        volumes:
+            - ./xBotDBData:/var/lib/postgresql/data
+        restart: always
