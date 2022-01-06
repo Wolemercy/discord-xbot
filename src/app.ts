@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import express, { Application, Response, Request, NextFunction } from 'express';
 import logger from './config/logger';
 import errorHandler from './config/error';
+import { BaseError } from './types/errors';
 const app: Application = express();
 
 /* LOG THE REQUEST */
@@ -22,7 +23,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // API RULES
-
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*'); // TODO: ensure this is removed for production
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -34,6 +34,17 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
+// TODO: error handler
+app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
+    logger.info(`server.js error handler: ${err.message}`);
+    errorHandler.handleError(err);
+    res.status(err.httpCode || 500);
+    res.json({
+        errors: {
+            message: err.message
+        }
+    });
+});
 // create the server
 // const server = http.createServer(app);
 app.listen(5000, () => logger.info(`Server listening on http://localhost:${5000}/`));
