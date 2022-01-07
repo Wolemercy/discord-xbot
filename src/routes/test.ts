@@ -8,8 +8,8 @@ const testRoutes = (app: Router) => {
     router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         await cache.set('key', 'value');
         const val = await cache.get('key');
-
-        console.log(val);
+        const data = await db.user.count();
+        console.log(val, data);
 
         res.status(200).send(val);
     });
