@@ -1,6 +1,8 @@
 require('dotenv').config(); // imports the .env file to process.env
 import bodyParser from 'body-parser';
 import express, { Application, Response, Request, NextFunction } from 'express';
+import WOKCommands from 'wokcommands';
+import path from 'path';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './types/errors';
@@ -60,6 +62,12 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
 
 client.on('ready', () => {
     logger.info(`Logged in as ${client?.user?.tag}!`);
+    new WOKCommands(client, {
+        // The name of the local folder for your command files
+        commandsDir: path.join(__dirname, 'botfiles/commands'),
+        // Allow importing of .ts files if you are using ts-node
+        typeScript: true
+    });
 });
 
 client.on('messageCreate', (msg) => {
