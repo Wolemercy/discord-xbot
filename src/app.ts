@@ -1,8 +1,13 @@
+require('dotenv').config(); // imports the .env file to process.env
 import bodyParser from 'body-parser';
 import express, { Application, Response, Request, NextFunction } from 'express';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './types/errors';
+import { Client, Intents } from 'discord.js';
+
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES] });
+
 const app: Application = express();
 
 /* LOG THE REQUEST */
@@ -47,7 +52,30 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
 });
 // create the server
 // const server = http.createServer(app);
-app.listen(5000, () => logger.info(`Server listening on http://localhost:${5000}/`));
+
+client.on('ready', () => {
+    logger.info(`Logged in as ${client?.user?.tag}!`);
+});
+
+client.on('messageCreate', (msg) => {
+    if (msg.author.bot) {
+        return;
+    }
+    logger.info(msg.content);
+    if (msg.content == 'ping') {
+        msg.reply('pong')
+            .then(() => {
+                logger.info('replied');
+            })
+            .catch(logger.error);
+    }
+});
+
+client.login(process.env.BOT_TOKEN);
+
+app.listen(5000, () => {
+    logger.info(`Server listening on http://localhost:${5000}/`);
+});
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
 process.on('unhandledRejection', (error: Error, promise) => {
