@@ -23,6 +23,7 @@
     "dependencies": {
         "@discordjs/builders": "^0.11.0",
         "@discordjs/rest": "^0.2.0-canary.0",
+        "@prisma/client": "^3.7.0",
         "body-parser": "^1.19.1",
         "discord-api-types": "^0.26.1",
         "discord.js": "^13.5.0",

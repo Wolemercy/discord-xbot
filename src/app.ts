@@ -5,8 +5,15 @@ import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './types/errors';
 import { Client, Intents } from 'discord.js';
+import { createClient } from 'redis';
+import { PrismaClient } from '@prisma/client';
+import getRoutes from '../src/routes';
+
+const db = new PrismaClient();
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES] });
+// redis cache
+const cache = createClient();
 
 const app: Application = express();
 
@@ -20,9 +27,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).send('Hello');
-});
+app.use(getRoutes());
 /* PARSE THE REQUEST */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -73,8 +78,14 @@ client.on('messageCreate', (msg) => {
 
 client.login(process.env.BOT_TOKEN);
 
-app.listen(5000, () => {
-    logger.info(`Server listening on http://localhost:${5000}/`);
+cache.on('error', (err) => console.log('Redis cache Error', err));
+cache.on('connect', function () {
+    console.log('Cache connected! successfully');
+});
+
+app.listen(process.env.PORT, async () => {
+    logger.info(`Server listening on http://localhost:${process.env.PORT}/`);
+    await cache.connect();
 });
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
@@ -88,3 +99,5 @@ process.on('uncaughtException', (error) => {
     logger.info('Uncaught Exception', error.message);
     errorHandler.handleError(error);
 });
+
+export { cache, db };

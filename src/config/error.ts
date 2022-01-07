@@ -1,4 +1,4 @@
-const logger = require('./logger');
+import logger from './logger';
 
 /*
 Extends error to contain httpCode and isOperational attributes.
