@@ -17,3 +17,5 @@ services:
         volumes:
             - ./xBotDBData:/var/lib/postgresql/data
         restart: always
+volumes:
+    redis: {}
