@@ -31,7 +31,7 @@ coverage
 # Bower dependency directory (https://bower.io/)
 bower_components
 
-# node-waf configuration
+# node-waf co nfiguration
 .lock-wscript
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
@@ -63,3 +63,5 @@ jspm_packages/
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
+xBotDBData/
+redis/
