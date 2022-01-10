@@ -28,7 +28,7 @@ model Server {
   xBotUser     User              @relation(fields: [xBotUserId], references: [id])
   name         String
   settings     SeverSetting?
-  guildMatches ServerUserMatche?
+  guildMatches ServerUserMatch?
   matches      Match?
   modules      ServerModule?
   createdAt    DateTime          @default(now())
@@ -66,11 +66,12 @@ model Match {
   lastMatchDate  DateTime
   nextMatchDate  DateTime
   matchFrequency Int      @default(7)
+  status MATCH_STATUS
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
-model ServerUserMatche {
+model ServerUserMatch {
   id             Int      @id @default(autoincrement())
   xBotServerId   Int      @unique
   xBotServer     Server   @relation(fields: [xBotServerId], references: [id])
@@ -91,4 +92,10 @@ model ServerModule {
   modulePermissions Json
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+enum MATCH_STATUS {
+  SUCCESS
+  PAUSED
+  FAILED
 }

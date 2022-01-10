@@ -7,7 +7,8 @@ APP_NAME=
 BOT_TOKEN=
 CLIENT_ID=
 GUILD_ID=
-
+DISCORD_OAUTH_SECRET=
+DISCORD_REDIRECT_URL=
 # This was inserted by `prisma init`:
 # Environment variables declared in this file are automatically made available to Prisma.
 # See the documentation for more detail: https://pris.ly/d/prisma-schema#using-environment-variables
