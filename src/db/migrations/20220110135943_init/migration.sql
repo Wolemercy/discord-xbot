@@ -4,13 +4,27 @@ CREATE TYPE "MATCH_STATUS" AS ENUM ('SUCCESS', 'PAUSED', 'FAILED');
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "username" TEXT NOT NULL,
-    "avatar" TEXT NOT NULL,
+    "dUsername" TEXT NOT NULL,
+    "dAvatar" TEXT NOT NULL,
+    "dClientId" TEXT NOT NULL,
+    "dLocale" TEXT NOT NULL,
+    "dAccessToken" TEXT NOT NULL,
+    "dRefreshToken" TEXT NOT NULL,
     "isPremium" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL,
+    "sid" TEXT NOT NULL,
+    "data" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -91,6 +105,12 @@ CREATE TABLE "ServerModule" (
 
     CONSTRAINT "ServerModule_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_dClientId_key" ON "User"("dClientId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Session_sid_key" ON "Session"("sid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SeverSetting_xBotServerId_key" ON "SeverSetting"("xBotServerId");

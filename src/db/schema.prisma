@@ -11,28 +11,39 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String
-  avatar    String
-  isPremium Boolean
-  servers   Server[]
-  matches   Match?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  dUsername     String
+  dAvatar       String
+  dClientId     String   @unique
+  dLocale       String
+  dAccessToken  String
+  dRefreshToken String
+  isPremium     Boolean
+  servers       Server[]
+  matches       Match?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }
 
 model Server {
-  id           Int               @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   dGuildId     String
   xBotUserId   Int
-  xBotUser     User              @relation(fields: [xBotUserId], references: [id])
+  xBotUser     User             @relation(fields: [xBotUserId], references: [id])
   name         String
   settings     SeverSetting?
   guildMatches ServerUserMatch?
   matches      Match?
   modules      ServerModule?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 }
 
 model Module {
@@ -58,17 +69,17 @@ model SeverSetting {
 }
 
 model Match {
-  id             Int      @id @default(autoincrement())
-  xBotUserId     Int      @unique
-  xBotServerId   Int      @unique
-  xBotUser       User     @relation(fields: [xBotUserId], references: [id])
-  xBotServer     Server   @relation(fields: [xBotServerId], references: [id])
+  id             Int          @id @default(autoincrement())
+  xBotUserId     Int          @unique
+  xBotServerId   Int          @unique
+  xBotUser       User         @relation(fields: [xBotUserId], references: [id])
+  xBotServer     Server       @relation(fields: [xBotServerId], references: [id])
   lastMatchDate  DateTime
   nextMatchDate  DateTime
-  matchFrequency Int      @default(7)
-  status MATCH_STATUS
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  matchFrequency Int          @default(7)
+  status         MATCH_STATUS
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model ServerUserMatch {
