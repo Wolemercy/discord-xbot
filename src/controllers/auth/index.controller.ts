@@ -15,6 +15,8 @@ class AuthController {
 
         res.sendStatus(200);
     }
+
+    async login(req: Request, res: Response, next: NextFunction) {}
 }
 
 const authController = new AuthController();
