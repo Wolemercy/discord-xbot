@@ -5,7 +5,7 @@ import WOKCommands from 'wokcommands';
 import path from 'path';
 import logger from './config/logger';
 import errorHandler from './config/error';
-import { BaseError } from './types/errors';
+import { BaseError } from './@types/errors';
 import { Client, Intents } from 'discord.js';
 import { createClient } from 'redis';
 import { PrismaClient } from '@prisma/client';
@@ -15,7 +15,9 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 
 const db = new PrismaClient();
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES]
+});
 // redis cache
 const cache = createClient();
 
@@ -27,7 +29,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     logger.info(`METHOD - [${req.method}], URL - [${req.url}], IP - [${req.socket.remoteAddress}]`);
 
     res.on('finish', () => {
-        logger.info(`METHOD - [${req.method}], URL - [${req.url}], IP - [${req.socket.remoteAddress}], STATUS - [${res.statusCode}] `);
+        logger.info(
+            `METHOD - [${req.method}], URL - [${req.url}], IP - [${req.socket.remoteAddress}], STATUS - [${res.statusCode}] `
+        );
     });
     next();
 });
@@ -40,7 +44,10 @@ app.use(bodyParser.json());
 // API RULES
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*'); // TODO: ensure this is removed for production
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
 
     if (req.method == 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'GET POST PUT PATCH DELETE');
@@ -71,15 +78,6 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-app.all('*', (req, res, next) => {
-    res.status(404).json({
-        errors: {
-            status: 'fail',
-            message: `Can't find ${req.originalUrl} on this server!`
-        }
-    });
-});
-
 app.use(
     expressSession({
         cookie: {
@@ -101,6 +99,15 @@ app.use(
 );
 // create the server
 // const server = http.createServer(app);
+
+app.all('*', (req, res, next) => {
+    res.status(404).json({
+        errors: {
+            status: 'fail',
+            message: `Can't find ${req.originalUrl} on this server!`
+        }
+    });
+});
 
 client.on('ready', () => {
     logger.info(`Logged in as ${client?.user?.tag}!`);

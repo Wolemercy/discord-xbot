@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { db } from '../app';
-import { User } from '../types/user';
+import { User } from '../@types/user';
 
-class Session {
+class SessionConfig {
     static async serializeSession(req: Request, user: User) {
         req.session.user = user;
         req.user = user;
@@ -19,4 +19,4 @@ class Session {
     }
 }
 
-export default Session;
+export default SessionConfig;

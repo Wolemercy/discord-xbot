@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { cache, db } from '../../app';
-
+import DiscordConfig from '../../config/discord';
+import errorHandler from '../../config/error';
+import SessionConfig from '../../config/session';
 class AuthController {
     async getMe(req: Request, res: Response, next: NextFunction) {
         await cache.set('key', 'value');
@@ -17,6 +19,33 @@ class AuthController {
     }
 
     async login(req: Request, res: Response, next: NextFunction) {}
+    async discordAuthRedirectHandler(req: Request, res: Response, next: NextFunction) {
+        const { code } = req.query;
+        if (code) {
+            try {
+                const payload = DiscordConfig.buildOAuth2CredentialsRequest(code.toString());
+                const { data: credentials } = await DiscordConfig.exchangeAccessCodeForCredentials(
+                    payload
+                );
+
+                const { access_token: dAccessToken, refresh_token: dRefreshToken } = credentials;
+                const { data: user } = await DiscordConfig.getDiscordUserDetails(dAccessToken);
+
+                const newUser = await DiscordConfig.createOrUpdateUser(
+                    user,
+                    { dAccessToken, dRefreshToken },
+                    next
+                );
+                if (newUser) {
+                    await SessionConfig.serializeSession(req, newUser);
+                    res.status(200).send(newUser);
+                }
+            } catch (err: any) {
+                errorHandler.handleError(err);
+                next(err);
+            }
+        }
+    }
 }
 
 const authController = new AuthController();
