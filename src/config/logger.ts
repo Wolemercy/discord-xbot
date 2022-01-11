@@ -47,27 +47,27 @@ class Logger {
     }
 
     trace(msg: string, meta?: any) {
-        this.logger.log('trace', msg, meta);
+        this.logger.log('trace', msg, JSON.stringify(meta, null, 4));
     }
 
     debug(msg: string, meta?: any) {
-        this.logger.debug(msg, meta);
+        this.logger.debug(msg, JSON.stringify(meta, null, 4));
     }
 
     info(msg: string, meta?: any) {
-        this.logger.info(msg, meta);
+        this.logger.info(msg, JSON.stringify(meta, null, 4));
     }
 
     warn(msg: string, meta?: any) {
-        this.logger.warn(msg, meta);
+        this.logger.warn(msg, JSON.stringify(meta, null, 4));
     }
 
     error(msg: string, meta?: any) {
-        this.logger.error(msg, meta);
+        this.logger.error(msg, JSON.stringify(meta, null, 4));
     }
 
     fatal(msg: string, meta?: any) {
-        this.logger.log('fatal', msg, meta);
+        this.logger.log('fatal', msg, JSON.stringify(meta, null, 4));
     }
 }
 

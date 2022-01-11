@@ -10,12 +10,14 @@ class BaseError extends Error {
     description: string;
     httpCode: number;
     isOperational: boolean;
+    status: string;
     constructor(description: string, httpCode: number, isOperational: boolean) {
         super(description);
         this.description = description;
         Object.setPrototypeOf(this, new.target.prototype);
         this.httpCode = httpCode;
         this.isOperational = isOperational;
+        this.status = `${httpCode}`.startsWith('4') ? 'fail' : 'error';
         Error.captureStackTrace(this);
     }
 }

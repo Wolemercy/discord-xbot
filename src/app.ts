@@ -54,9 +54,28 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
     logger.info(`server.js error handler: ${err.message}`);
     errorHandler.handleError(err);
     res.status(err.httpCode || 500);
-    res.json({
+    if (err.data) {
+        res.json({
+            errors: {
+                status: err.status,
+                message: [err.message, ...err.data].join('. ')
+            }
+        });
+    } else {
+        res.json({
+            errors: {
+                status: err.status,
+                message: err.message
+            }
+        });
+    }
+});
+
+app.all('*', (req, res, next) => {
+    res.status(404).json({
         errors: {
-            message: err.message
+            status: 'fail',
+            message: `Can't find ${req.originalUrl} on this server!`
         }
     });
 });
