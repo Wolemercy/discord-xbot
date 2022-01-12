@@ -24,11 +24,14 @@
         "@discordjs/builders": "^0.11.0",
         "@discordjs/rest": "^0.2.0-canary.0",
         "@prisma/client": "^3.7.0",
+        "@quixo3/prisma-session-store": "^3.1.2",
+        "axios": "^0.24.0",
         "body-parser": "^1.19.1",
         "discord-api-types": "^0.26.1",
         "discord.js": "^13.5.0",
         "dotenv": "^10.0.0",
         "express": "^4.17.2",
+        "express-session": "^1.17.2",
         "redis": "^4.0.1",
         "winston": "^3.3.3",
         "wokcommands": "^1.5.3"
@@ -37,6 +40,7 @@
         "@types/body-parser": "^1.19.2",
         "@types/dotenv": "^8.2.0",
         "@types/express": "^4.17.13",
+        "@types/express-session": "^1.17.4",
         "@types/node": "^17.0.8",
         "husky": "^7.0.4",
         "lint-staged": "^12.1.5",
@@ -48,5 +52,9 @@
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
+    },
+    "prisma": {
+        "seed": "ts-node src/db/seeds/seed.ts",
+        "schema": "src/db/schema.prisma"
     }
 }

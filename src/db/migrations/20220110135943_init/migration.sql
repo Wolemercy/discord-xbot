@@ -1,13 +1,30 @@
+-- CreateEnum
+CREATE TYPE "MATCH_STATUS" AS ENUM ('SUCCESS', 'PAUSED', 'FAILED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "username" TEXT NOT NULL,
-    "avatar" TEXT NOT NULL,
+    "dUsername" TEXT NOT NULL,
+    "dAvatar" TEXT NOT NULL,
+    "dClientId" TEXT NOT NULL,
+    "dLocale" TEXT NOT NULL,
+    "dAccessToken" TEXT NOT NULL,
+    "dRefreshToken" TEXT NOT NULL,
     "isPremium" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL,
+    "sid" TEXT NOT NULL,
+    "data" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -56,6 +73,7 @@ CREATE TABLE "Match" (
     "lastMatchDate" TIMESTAMP(3) NOT NULL,
     "nextMatchDate" TIMESTAMP(3) NOT NULL,
     "matchFrequency" INTEGER NOT NULL DEFAULT 7,
+    "status" "MATCH_STATUS" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -63,7 +81,7 @@ CREATE TABLE "Match" (
 );
 
 -- CreateTable
-CREATE TABLE "ServerUserMatche" (
+CREATE TABLE "ServerUserMatch" (
     "id" SERIAL NOT NULL,
     "xBotServerId" INTEGER NOT NULL,
     "dUserId" TEXT NOT NULL,
@@ -72,7 +90,7 @@ CREATE TABLE "ServerUserMatche" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "ServerUserMatche_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ServerUserMatch_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -89,6 +107,12 @@ CREATE TABLE "ServerModule" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_dClientId_key" ON "User"("dClientId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Session_sid_key" ON "Session"("sid");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "SeverSetting_xBotServerId_key" ON "SeverSetting"("xBotServerId");
 
 -- CreateIndex
@@ -98,7 +122,7 @@ CREATE UNIQUE INDEX "Match_xBotUserId_key" ON "Match"("xBotUserId");
 CREATE UNIQUE INDEX "Match_xBotServerId_key" ON "Match"("xBotServerId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ServerUserMatche_xBotServerId_key" ON "ServerUserMatche"("xBotServerId");
+CREATE UNIQUE INDEX "ServerUserMatch_xBotServerId_key" ON "ServerUserMatch"("xBotServerId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ServerModule_xBotServerId_key" ON "ServerModule"("xBotServerId");
@@ -119,7 +143,7 @@ ALTER TABLE "Match" ADD CONSTRAINT "Match_xBotUserId_fkey" FOREIGN KEY ("xBotUse
 ALTER TABLE "Match" ADD CONSTRAINT "Match_xBotServerId_fkey" FOREIGN KEY ("xBotServerId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ServerUserMatche" ADD CONSTRAINT "ServerUserMatche_xBotServerId_fkey" FOREIGN KEY ("xBotServerId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ServerUserMatch" ADD CONSTRAINT "ServerUserMatch_xBotServerId_fkey" FOREIGN KEY ("xBotServerId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ServerModule" ADD CONSTRAINT "ServerModule_xBotServerId_fkey" FOREIGN KEY ("xBotServerId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

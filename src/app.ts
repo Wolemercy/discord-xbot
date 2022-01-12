@@ -10,6 +10,8 @@ import { Client, Intents } from 'discord.js';
 import { createClient } from 'redis';
 import { PrismaClient } from '@prisma/client';
 import getRoutes from '../src/routes';
+import expressSession from 'express-session';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 
 const db = new PrismaClient();
 
@@ -18,7 +20,8 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT
 const cache = createClient();
 
 const app: Application = express();
-
+const { BOT_TOKEN, PORT, SESSION_SECRET } = process.env;
+const sessionName = 'DISCORD_OAUTH2_SESSION_ID';
 /* LOG THE REQUEST */
 app.use((req: Request, res: Response, next: NextFunction) => {
     logger.info(`METHOD - [${req.method}], URL - [${req.url}], IP - [${req.socket.remoteAddress}]`);
@@ -29,7 +32,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.use(getRoutes());
+app.use('/api/', getRoutes());
 /* PARSE THE REQUEST */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -57,6 +60,26 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
         }
     });
 });
+
+app.use(
+    expressSession({
+        cookie: {
+            maxAge: 7 * 24 * 60 * 60 * 1000 // ms,
+            //   httpOnly: true,
+            //   sameSite: true,
+            //   secure: process.env.NODE_ENV === "production",
+        },
+        secret: SESSION_SECRET!,
+        name: sessionName,
+        resave: true,
+        saveUninitialized: false,
+        store: new PrismaSessionStore(db, {
+            checkPeriod: 2 * 60 * 1000, //ms
+            dbRecordIdIsSessionId: true,
+            dbRecordIdFunction: undefined
+        })
+    })
+);
 // create the server
 // const server = http.createServer(app);
 
@@ -84,15 +107,15 @@ client.on('messageCreate', (msg) => {
     }
 });
 
-client.login(process.env.BOT_TOKEN);
+client.login(BOT_TOKEN);
 
 cache.on('error', (err) => console.log('Redis cache Error', err));
 cache.on('connect', function () {
     console.log('Cache connected! successfully');
 });
 
-app.listen(process.env.PORT, async () => {
-    logger.info(`Server listening on http://localhost:${process.env.PORT}/`);
+app.listen(PORT, async () => {
+    logger.info(`Server listening on http://localhost:${PORT}/`);
     await cache.connect();
 });
 
