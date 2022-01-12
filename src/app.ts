@@ -1,8 +1,6 @@
 require('dotenv').config(); // imports the .env file to process.env
 import bodyParser from 'body-parser';
 import express, { Application, Response, Request, NextFunction } from 'express';
-import WOKCommands from 'wokcommands';
-import path from 'path';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './@types/errors';
