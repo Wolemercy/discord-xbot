@@ -7,9 +7,8 @@ import {
     UserParams,
     User
 } from '../@types/user';
-import { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import url from 'url';
-import axios from 'axios';
 import { axiosConfig } from './helpers';
 import { db } from '../app';
 import { APIError } from './error';
@@ -72,9 +71,8 @@ class DiscordConfig {
 
     static async createOrUpdateUser(
         user: DiscordOAuth2UserResponse,
-        credentials: EncryptedTokens,
-        next: NextFunction
-    ): Promise<User | void> {
+        credentials: EncryptedTokens
+    ): Promise<User> {
         const builtUser = this.buildUserResponse(user, credentials);
 
         try {
@@ -100,12 +98,6 @@ class DiscordConfig {
                 }
             });
 
-            if (!response) {
-                throw new APIError(
-                    'Server error, could not log you in at this moment. Please try again'
-                );
-            }
-
             return {
                 ...builtUser,
                 id: response.id,
@@ -114,7 +106,8 @@ class DiscordConfig {
                 isPremium: response.isPremium
             };
         } catch (err: any) {
-            return next(err);
+            console.log(err);
+            throw new APIError(err);
         }
     }
 }

@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { cache, db } from '../../app';
 import DiscordConfig from '../../config/discord';
-import errorHandler from '../../config/error';
+import errorHandler, { UnauthorizedError } from '../../config/error';
 import SessionConfig from '../../config/session';
 class AuthController {
     async getMe(req: Request, res: Response, next: NextFunction) {
@@ -31,17 +31,16 @@ class AuthController {
                 const { access_token: dAccessToken, refresh_token: dRefreshToken } = credentials;
                 const { data: user } = await DiscordConfig.getDiscordUserDetails(dAccessToken);
 
-                const newUser = await DiscordConfig.createOrUpdateUser(
-                    user,
-                    { dAccessToken, dRefreshToken },
-                    next
-                );
-                if (newUser) {
-                    await SessionConfig.serializeSession(req, newUser);
-                    res.status(200).send(newUser);
-                }
+                const newUser = await DiscordConfig.createOrUpdateUser(user, {
+                    dAccessToken,
+                    dRefreshToken
+                });
+
+                await SessionConfig.serializeSession(req, newUser);
+                return res.status(200).send('Logged in successfully');
             } catch (err: any) {
-                errorHandler.handleError(err);
+                // errorHandler.handleError(err);
+                console.log(err);
                 next(err);
             }
         }

@@ -35,7 +35,11 @@ class APIError extends BaseError {
 }
 
 class UnauthorizedError extends BaseError {
-    constructor(description = 'The request lacks valid authentication credentials', httpCode = 401, isOperational = true) {
+    constructor(
+        description = 'The request lacks valid authentication credentials',
+        httpCode = 401,
+        isOperational = true
+    ) {
         super(description, httpCode, isOperational);
     }
 }
@@ -48,8 +52,9 @@ It could be extended to also include sending notification events to developers a
 class ErrorHandler {
     async handleError(err: Error) {
         if (!this.isTrustedError(err)) {
-            logger.fatal('Error message: ', err);
-            process.exit(1);
+            console.log(JSON.stringify(err));
+            // logger.fatal('Error message: ', err);
+            // process.exit(1);
         }
         logger.info('Error message', err);
     }

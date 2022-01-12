@@ -4,18 +4,25 @@ import { User } from '../@types/user';
 
 class SessionConfig {
     static async serializeSession(req: Request, user: User) {
-        req.session.user = user;
-        req.user = user;
+        try {
+            req.user = user;
 
-        const session = db.session.create({
-            data: {
-                id: req.user.id.toString(),
-                sid: req.sessionID,
-                data: JSON.stringify(user),
-                expiresAt: req.session.cookie.expires!.toString()
-            }
-        });
-        return session;
+            req.session.user = user;
+            await db.session.upsert({
+                where: {
+                    sid: req.sessionID
+                },
+                update: {},
+                create: {
+                    id: user.dClientId.toString(),
+                    sid: req.sessionID,
+                    data: JSON.stringify(user),
+                    expiresAt: new Date(req.session.cookie.expires!.toString())
+                }
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 

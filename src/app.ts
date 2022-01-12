@@ -36,7 +36,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.use('/api/', getRoutes());
 /* PARSE THE REQUEST */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -58,7 +57,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // TODO: error handler
 app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
-    logger.info(`server.js error handler: ${err.message}`);
+    console.log('I logged');
+    // logger.info(`server.js error handler: ${err.message}`);
+    console.log(err);
     errorHandler.handleError(err);
     res.status(err.httpCode || 500);
     if (err.data) {
@@ -81,14 +82,15 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
 app.use(
     expressSession({
         cookie: {
-            maxAge: 7 * 24 * 60 * 60 * 1000 // ms,
+            // maxAge: 7 * 24 * 60 * 60 * 1000 // ms,
+            maxAge: 3600000 * 24
             //   httpOnly: true,
             //   sameSite: true,
             //   secure: process.env.NODE_ENV === "production",
         },
         secret: SESSION_SECRET!,
         name: sessionName,
-        resave: true,
+        resave: false,
         saveUninitialized: false,
         store: new PrismaSessionStore(db, {
             checkPeriod: 2 * 60 * 1000, //ms
@@ -97,17 +99,18 @@ app.use(
         })
     })
 );
+app.use('/api/', getRoutes());
 // create the server
 // const server = http.createServer(app);
 
-app.all('*', (req, res, next) => {
-    res.status(404).json({
-        errors: {
-            status: 'fail',
-            message: `Can't find ${req.originalUrl} on this server!`
-        }
-    });
-});
+// app.all('*', (req, res, next) => {
+//     res.status(404).json({
+//         errors: {
+//             status: 'fail',
+//             message: `Can't find ${req.originalUrl} on this server!`
+//         }
+//     });
+// });
 
 client.on('ready', () => {
     logger.info(`Logged in as ${client?.user?.tag}!`);
@@ -147,14 +150,16 @@ app.listen(PORT, async () => {
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
 process.on('unhandledRejection', (error: Error, promise) => {
-    logger.info('Unhandled Rejection', error.message);
+    // logger.info('Unhandled Rejection', error.message);
+    console.log('Unhandled');
     throw error; // will generate an uncaughtException
 });
 
 // Deals with programmer errors by exiting the node application
 process.on('uncaughtException', (error) => {
-    logger.info('Uncaught Exception', error.message);
-    errorHandler.handleError(error);
+    // logger.info('Uncaught Exception', error.message);
+    console.log('uncaught');
+    // errorHandler.handleError(error);
 });
 
 export { cache, db };
