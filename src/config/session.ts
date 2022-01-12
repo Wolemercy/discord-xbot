@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { db } from '../app';
 import { User } from '../@types/user';
 import cookieParser from 'cookie-parser';
+import logger from './logger';
 
 const { SESSION_SECRET, SESSION_NAME } = process.env;
+const NAMESPACE = 'SessionConfig';
 class SessionConfig {
     static async serializeSession(req: Request, user: User) {
         try {
@@ -43,14 +45,14 @@ class SessionConfig {
                 .toString();
 
             // get's the user from DB using their sessionID
-            const authenticatedUser = await db.session.findUnique({
+            const sessionData = await db.session.findUnique({
                 where: {
                     sid: sessionID
                 }
             });
 
-            if (authenticatedUser) {
-                if (authenticatedUser.expiresAt < now) {
+            if (sessionData) {
+                if (sessionData.expiresAt < now) {
                     console.log('Session has expired');
                     await db.session.delete({
                         where: {
@@ -58,11 +60,15 @@ class SessionConfig {
                         }
                     });
                     console.log('Session deleted');
+                    logger.info(
+                        `Namespace:[${NAMESPACE}.deserializeSession]: user with dClientId:${sessionData.id} session deleted due to expiry.`,
+                        {
+                            dClientId: sessionData.id
+                        }
+                    );
                     next();
                 } else {
-                    console.log('Session not expired');
-                    const data = JSON.parse(authenticatedUser.data);
-                    console.log(data);
+                    const data = JSON.parse(sessionData.data);
                     req.user = data;
                     next();
                 }

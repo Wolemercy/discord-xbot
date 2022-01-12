@@ -16,6 +16,7 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import SessionConfig from './config/session';
 
 const db = new PrismaClient();
+const NAMESPACE = 'app.ts';
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES]
@@ -58,28 +59,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // TODO: error handler
-app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
-    console.log('I logged');
-    // logger.info(`server.js error handler: ${err.message}`);
-    console.log(err);
-    errorHandler.handleError(err);
-    res.status(err.httpCode || 500);
-    if (err.data) {
-        res.json({
-            errors: {
-                status: err.status,
-                message: [err.message, ...err.data].join('. ')
-            }
-        });
-    } else {
-        res.json({
-            errors: {
-                status: err.status,
-                message: err.message
-            }
-        });
-    }
-});
 
 app.use(
     expressSession({
@@ -106,14 +85,14 @@ app.use('/api/', getRoutes());
 // create the server
 // const server = http.createServer(app);
 
-// app.all('*', (req, res, next) => {
-//     res.status(404).json({
-//         errors: {
-//             status: 'fail',
-//             message: `Can't find ${req.originalUrl} on this server!`
-//         }
-//     });
-// });
+app.all('*', (req, res, next) => {
+    res.status(404).json({
+        errors: {
+            status: 'fail',
+            message: `Can't find ${req.originalUrl} on this server!`
+        }
+    });
+});
 
 client.on('ready', () => {
     logger.info(`Logged in as ${client?.user?.tag}!`);
@@ -143,7 +122,28 @@ client.login(BOT_TOKEN);
 
 cache.on('error', (err) => console.log('Redis cache Error', err));
 cache.on('connect', function () {
-    console.log('Cache connected! successfully');
+    logger.info('Cache connected! successfully');
+});
+
+app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Namespace:[${NAMESPACE} global error handler: ${err.message}`);
+    errorHandler.handleError(err);
+    res.status(err.httpCode || 500);
+    if (err.data) {
+        res.json({
+            errors: {
+                status: err.status,
+                message: [err.message, ...err.data].join('. ')
+            }
+        });
+    } else {
+        res.json({
+            errors: {
+                status: err.status,
+                message: err.message
+            }
+        });
+    }
 });
 
 app.listen(PORT, async () => {
@@ -153,16 +153,14 @@ app.listen(PORT, async () => {
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
 process.on('unhandledRejection', (error: Error, promise) => {
-    // logger.info('Unhandled Rejection', error.message);
-    console.log('Unhandled');
+    logger.info('Unhandled Rejection', error.message);
     throw error; // will generate an uncaughtException
 });
 
 // Deals with programmer errors by exiting the node application
 process.on('uncaughtException', (error) => {
-    // logger.info('Uncaught Exception', error.message);
-    console.log('uncaught');
-    // errorHandler.handleError(error);
+    logger.info('Uncaught Exception', error.message);
+    errorHandler.handleError(error);
 });
 
 export { cache, db };

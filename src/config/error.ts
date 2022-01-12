@@ -52,8 +52,8 @@ It could be extended to also include sending notification events to developers a
 class ErrorHandler {
     async handleError(err: Error) {
         if (!this.isTrustedError(err)) {
-            console.log(JSON.stringify(err));
-            // logger.fatal('Error message: ', err);
+            logger.fatal('Error message: ', err);
+            // FIXME: Check this and what should be done if the error is not trusted.
             // process.exit(1);
         }
         logger.info('Error message', err);

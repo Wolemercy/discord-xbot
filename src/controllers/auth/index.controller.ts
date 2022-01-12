@@ -1,8 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { cache, db } from '../../app';
 import DiscordConfig from '../../config/discord';
-import errorHandler, { UnauthorizedError } from '../../config/error';
+import errorHandler, { APIError, UnauthorizedError } from '../../config/error';
 import SessionConfig from '../../config/session';
+import logger from '../../config/logger';
+
+const NAMESPACE = 'AuthController';
 class AuthController {
     async getMe(req: Request, res: Response, next: NextFunction) {
         await cache.set('key', 'value');
@@ -39,8 +42,22 @@ class AuthController {
                 await SessionConfig.serializeSession(req, newUser);
                 return res.status(200).send('Logged in successfully');
             } catch (err: any) {
-                // errorHandler.handleError(err);
-                console.log(err);
+                if (err.response && err.response.data) {
+                    logger.info(
+                        `Namespace:[${NAMESPACE}.discordAuthRedirectHandler]: ${err.response.data.error_description}`,
+                        err
+                    );
+                    return next(new APIError(err.response.data.error_description));
+                } else if (err.request) {
+                    logger.info(
+                        `Namespace:[${NAMESPACE}.discordAuthRedirectHandler]: Request failed to be completed by axios`,
+                        err
+                    );
+                    return next(
+                        new UnauthorizedError('Your login request failed. Please try again.')
+                    );
+                }
+
                 next(err);
             }
         }

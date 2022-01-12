@@ -12,10 +12,11 @@ import url from 'url';
 import { axiosConfig } from './helpers';
 import { db } from '../app';
 import { APIError } from './error';
-import { NextFunction } from 'express';
+import logger from './logger';
 
-const { BOT_TOKEN, PORT, SESSION_SECRET, DISCORD_OAUTH_SECRET, DISCORD_REDIRECT_URL, CLIENT_ID } =
-    process.env;
+const { DISCORD_OAUTH_SECRET, DISCORD_REDIRECT_URL, CLIENT_ID } = process.env;
+
+const NAMESPACE = 'DiscordConfig';
 
 class DiscordConfig {
     static buildOAuth2CredentialsRequest(code: string, grant_type = 'authorization_code') {
@@ -98,6 +99,9 @@ class DiscordConfig {
                 }
             });
 
+            logger.info(
+                `Namespace:[${NAMESPACE}.createOrUpdateUser]: User with dClientId ${user.id} updated/created.`
+            );
             return {
                 ...builtUser,
                 id: response.id,
