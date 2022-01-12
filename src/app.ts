@@ -9,9 +9,11 @@ import { BaseError } from './@types/errors';
 import { Client, Intents } from 'discord.js';
 import { createClient } from 'redis';
 import { PrismaClient } from '@prisma/client';
+import cookieParser from 'cookie-parser';
 import getRoutes from '../src/routes';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import SessionConfig from './config/session';
 
 const db = new PrismaClient();
 
@@ -22,8 +24,7 @@ const client = new Client({
 const cache = createClient();
 
 const app: Application = express();
-const { BOT_TOKEN, PORT, SESSION_SECRET } = process.env;
-const sessionName = 'DISCORD_OAUTH2_SESSION_ID';
+const { BOT_TOKEN, PORT, SESSION_SECRET, SESSION_NAME } = process.env;
 /* LOG THE REQUEST */
 app.use((req: Request, res: Response, next: NextFunction) => {
     logger.info(`METHOD - [${req.method}], URL - [${req.url}], IP - [${req.socket.remoteAddress}]`);
@@ -39,6 +40,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 /* PARSE THE REQUEST */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // API RULES
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -89,7 +91,7 @@ app.use(
             //   secure: process.env.NODE_ENV === "production",
         },
         secret: SESSION_SECRET!,
-        name: sessionName,
+        name: SESSION_NAME,
         resave: false,
         saveUninitialized: false,
         store: new PrismaSessionStore(db, {
@@ -99,6 +101,7 @@ app.use(
         })
     })
 );
+app.use(SessionConfig.deserializeSession);
 app.use('/api/', getRoutes());
 // create the server
 // const server = http.createServer(app);
