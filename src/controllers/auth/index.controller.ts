@@ -1,9 +1,10 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { cache, db } from '../../app';
 import DiscordConfig from '../../config/discord';
-import errorHandler, { APIError, UnauthorizedError } from '../../config/error';
+import { APIError, UnauthorizedError } from '../../config/error';
 import SessionConfig from '../../config/session';
 import logger from '../../config/logger';
+import { Utils } from '../../config/helpers';
 
 const NAMESPACE = 'AuthController';
 class AuthController {
@@ -31,13 +32,11 @@ class AuthController {
                     payload
                 );
 
-                const { access_token: dAccessToken, refresh_token: dRefreshToken } = credentials;
-                const { data: user } = await DiscordConfig.getDiscordUserDetails(dAccessToken);
+                const { access_token, refresh_token } = credentials;
+                const { data: user } = await DiscordConfig.getDiscordUserDetails(access_token);
+                const encryptedTokens = Utils.encryptToken(access_token, refresh_token);
 
-                const newUser = await DiscordConfig.createOrUpdateUser(user, {
-                    dAccessToken,
-                    dRefreshToken
-                });
+                const newUser = await DiscordConfig.createOrUpdateUser(user, encryptedTokens);
 
                 await SessionConfig.serializeSession(req, newUser);
                 return res.status(200).send('Logged in successfully');

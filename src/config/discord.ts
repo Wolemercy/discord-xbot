@@ -9,16 +9,23 @@ import {
 } from '../@types/user';
 import axios, { AxiosRequestConfig } from 'axios';
 import url from 'url';
+import CryptoJS from 'crypto-js';
 import { axiosConfig } from './helpers';
 import { db } from '../app';
 import { APIError } from './error';
 import logger from './logger';
 
-const { DISCORD_OAUTH_SECRET, DISCORD_REDIRECT_URL, CLIENT_ID } = process.env;
+const { DISCORD_OAUTH_SECRET, DISCORD_REDIRECT_URL, CLIENT_ID, SESSION_SECRET } = process.env;
 
 const NAMESPACE = 'DiscordConfig';
 
 class DiscordConfig {
+    static encryptToken(token: string) {
+        return CryptoJS.AES.encrypt(token, SESSION_SECRET!);
+    }
+    static decryptToken(encrypted: string) {
+        return CryptoJS.AES.decrypt(encrypted, SESSION_SECRET!);
+    }
     static buildOAuth2CredentialsRequest(code: string, grant_type = 'authorization_code') {
         return {
             code,
