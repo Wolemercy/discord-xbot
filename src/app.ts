@@ -6,7 +6,7 @@ import path from 'path';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './@types/errors';
-import { Client, Intents } from 'discord.js';
+import { Intents } from 'discord.js';
 import { createClient } from 'redis';
 import { PrismaClient } from '@prisma/client';
 import cookieParser from 'cookie-parser';
@@ -14,11 +14,13 @@ import getRoutes from '../src/routes';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import SessionConfig from './config/session';
+import { registerCommands, registerEvents } from './botfiles/utils/registry';
+import DiscordClient from './botfiles/client/client';
 
 const db = new PrismaClient();
 const NAMESPACE = 'app.ts';
 
-const client = new Client({
+const client = new DiscordClient({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES]
 });
 // redis cache
@@ -94,31 +96,35 @@ app.all('*', (req, res, next) => {
     });
 });
 
-client.on('ready', () => {
-    logger.info(`Logged in as ${client?.user?.tag}!`);
-    new WOKCommands(client, {
-        // The name of the local folder for your command files
-        commandsDir: path.join(__dirname, 'botfiles/commands'),
-        // Allow importing of .ts files if you are using ts-node
-        typeScript: true
-    });
-});
+// client.on('ready', () => {
+//     logger.info(`Logged in as ${client?.user?.tag}!`);
+//     new WOKCommands(client, {
+//         // The name of the local folder for your command files
+//         commandsDir: path.join(__dirname, 'botfiles/commands'),
+//         // Allow importing of .ts files if you are using ts-node
+//         typeScript: true
+//     });
+// });
 
-client.on('messageCreate', (msg) => {
-    if (msg.author.bot) {
-        return;
-    }
-    logger.info(msg.content);
-    if (msg.content == 'ping') {
-        msg.reply('pong')
-            .then(() => {
-                logger.info('replied');
-            })
-            .catch(logger.error);
-    }
-});
+// client.on('messageCreate', (msg) => {
+//     if (msg.author.bot) {
+//         return;
+//     }
+//     logger.info(msg.content);
+//     if (msg.content == 'ping') {
+//         msg.reply('pong')
+//             .then(() => {
+//                 logger.info('replied');
+//             })
+//             .catch(logger.error);
+//     }
+// });
 
-client.login(BOT_TOKEN);
+const botLogin = async () => {
+    await registerCommands(client, '../commands');
+    await registerEvents(client, '../events');
+    await client.login(BOT_TOKEN);
+};
 
 cache.on('error', (err) => console.log('Redis cache Error', err));
 cache.on('connect', function () {
@@ -148,7 +154,12 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(PORT, async () => {
     logger.info(`Server listening on http://localhost:${PORT}/`);
-    await cache.connect();
+    try {
+        await botLogin();
+        await cache.connect();
+    } catch (err) {
+        logger.info('Error', err);
+    }
 });
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
