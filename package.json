@@ -35,6 +35,7 @@
         "express": "^4.17.2",
         "express-session": "^1.17.2",
         "redis": "^4.0.1",
+        "tedis": "^0.1.12",
         "winston": "^3.3.3"
     },
     "devDependencies": {

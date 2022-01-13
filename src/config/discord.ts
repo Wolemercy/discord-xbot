@@ -10,7 +10,7 @@ import {
 import axios, { AxiosRequestConfig } from 'axios';
 import url from 'url';
 import CryptoJS from 'crypto-js';
-import { axiosConfig } from './helpers';
+import { axiosConfig, Utils } from './helpers';
 import { db } from '../app';
 import { APIError } from './error';
 import logger from './logger';
@@ -83,43 +83,7 @@ class DiscordConfig {
     ): Promise<User> {
         const builtUser = this.buildUserResponse(user, credentials);
 
-        try {
-            const response = await db.user.upsert({
-                where: {
-                    dClientId: builtUser.dClientId
-                },
-                update: {
-                    dAccessToken: builtUser.dAccessToken,
-                    dRefreshToken: builtUser.dRefreshToken,
-                    dAvatar: builtUser.dAvatar,
-                    dLocale: builtUser.dLocale,
-                    dUsername: builtUser.dUsername
-                },
-                create: {
-                    dAccessToken: builtUser.dAccessToken,
-                    dRefreshToken: builtUser.dRefreshToken,
-                    dClientId: builtUser.dClientId,
-                    dAvatar: builtUser.dAvatar,
-                    dLocale: builtUser.dLocale,
-                    dUsername: builtUser.dUsername,
-                    isPremium: false
-                }
-            });
-
-            logger.info(
-                `Namespace:[${NAMESPACE}.createOrUpdateUser]: User with dClientId ${user.id} updated/created.`
-            );
-            return {
-                ...builtUser,
-                id: response.id,
-                createdAt: response.createdAt.toString(),
-                updatedAt: response.updatedAt.toString(),
-                isPremium: response.isPremium
-            };
-        } catch (err: any) {
-            console.log(err);
-            throw new APIError(err);
-        }
+        return Utils.createOrUpdateUser(builtUser);
     }
 }
 

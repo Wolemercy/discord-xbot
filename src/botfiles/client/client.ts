@@ -7,7 +7,7 @@ export default class DiscordClient extends Client {
     private _commands = new Collection<string, BaseCommand>();
     private _events = new Collection<string, BaseEvent>();
     private _prefix: string = '!';
-    private _configs = new Collection<string, ServerSetting>();
+    // private _configs = new Collection<string, ServerSetting>();
 
     constructor(options: ClientOptions) {
         super(options);
@@ -26,10 +26,10 @@ export default class DiscordClient extends Client {
         this._prefix = prefix;
     }
 
-    get configs() {
-        return this._configs;
-    }
-    set configs(guildConfigs: Collection<string, ServerSetting>) {
-        this._configs = guildConfigs;
-    }
+    // get configs() {
+    //     return this._configs;
+    // }
+    // set configs(guildConfigs: Collection<string, ServerSetting>) {
+    //     this._configs = guildConfigs;
+    // }
 }

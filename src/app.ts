@@ -14,6 +14,7 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import SessionConfig from './config/session';
 import { registerCommands, registerEvents } from './botfiles/utils/registry';
 import DiscordClient from './botfiles/client/client';
+import { Tedis } from 'tedis';
 
 const db = new PrismaClient();
 const NAMESPACE = 'app.ts';
@@ -22,7 +23,11 @@ const client = new DiscordClient({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES]
 });
 // redis cache
-const cache = createClient();
+// const cache = createClient();
+const cache = new Tedis({
+    host: '127.0.0.1',
+    port: 6379
+});
 
 const app: Application = express();
 const { BOT_TOKEN, PORT, SESSION_SECRET, SESSION_NAME } = process.env;
@@ -124,10 +129,10 @@ const botLogin = async () => {
     await client.login(BOT_TOKEN);
 };
 
-cache.on('error', (err) => console.log('Redis cache Error', err));
-cache.on('connect', function () {
-    logger.info('Cache connected! successfully');
-});
+// cache.on('error', (err) => console.log('Redis cache Error', err));
+// cache.on('connect', function () {
+//     logger.info('Cache connected! successfully');
+// });
 
 app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
     logger.info(`Namespace:[${NAMESPACE} global error handler: ${err.message}`);
@@ -154,7 +159,7 @@ app.listen(PORT, async () => {
     logger.info(`Server listening on http://localhost:${PORT}/`);
     try {
         await botLogin();
-        await cache.connect();
+        // await cache.connect();
     } catch (err) {
         logger.info('Error', err);
     }
