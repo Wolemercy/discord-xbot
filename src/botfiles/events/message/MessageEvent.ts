@@ -10,15 +10,12 @@ export default class MessageEvent extends BaseEvent {
     async run(client: DiscordClient, message: Message) {
         if (message.author.bot) return;
         const config = client.configs.get(message.guildId!);
-        if (!config) {
-            message.channel.send('No configuration set.');
-            return;
-        }
+        // if (!config) {
+        //     message.channel.send('No configuration set.');
+        //     return;
+        // }
         if (message.content.startsWith('*')) {
-            const [cmdName, ...cmdArgs] = message.content
-                .slice(config.botCommandPrefix.length)
-                .trim()
-                .split(/\s+/);
+            const [cmdName, ...cmdArgs] = message.content.slice(1).trim().split(/\s+/);
             const command = client.commands.get(cmdName);
             if (command) {
                 command.run(client, message, cmdArgs);
