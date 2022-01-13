@@ -23,10 +23,16 @@ const formatter = winston.format.combine(
     winston.format.colorize(),
     winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
     winston.format.splat(),
+    winston.format.errors({
+        stack: true
+    }),
     winston.format.printf((info) => {
-        const { timestamp, level, message, ...meta } = info;
-
-        return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''}`;
+        const { timestamp, level, message, stack, ...meta } = info;
+        let msg = `${timestamp} [${level}]: ${stack || message} `;
+        if (Object.keys(meta).length) {
+            msg += JSON.stringify(meta, null, 2);
+        }
+        return msg;
     })
 );
 
