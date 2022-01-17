@@ -1,8 +1,13 @@
-import { Message } from 'discord.js';
+import { Interaction, Message } from 'discord.js';
 import DiscordClient from '../../client/client';
 
 export default abstract class BaseCommand {
-    constructor(private name: string, private category: string, private aliases: Array<string>) {}
+    constructor(
+        private name: string,
+        private category: string,
+        private aliases: Array<string>,
+        private description?: string
+    ) {}
 
     getName(): string {
         return this.name;
@@ -13,10 +18,17 @@ export default abstract class BaseCommand {
     getAliases(): Array<string> {
         return this.aliases;
     }
+    getDescription(): string {
+        return (
+            this.description ||
+            `A wonderful description for the command with name:${this.getName()}`
+        );
+    }
 
     abstract run(
         client: DiscordClient,
         message: Message,
         args: Array<string> | null
     ): Promise<void>;
+    abstract execute(interaction: Interaction): Promise<void>;
 }

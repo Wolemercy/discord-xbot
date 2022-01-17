@@ -10,6 +10,9 @@ export default class MessageEvent extends BaseEvent {
 
     async run(client: DiscordClient, message: Message) {
         if (message.author.bot) return;
+        if (message.interaction?.type === 'APPLICATION_COMMAND') {
+            console.log('I logged');
+        }
         let config = (await cache.get(message.guildId!)) as any;
         if (!config) {
             message.channel.send(
