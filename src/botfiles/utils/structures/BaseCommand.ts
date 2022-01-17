@@ -1,5 +1,6 @@
 import { Interaction, Message } from 'discord.js';
 import DiscordClient from '../../client/client';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 export default abstract class BaseCommand {
     constructor(
@@ -25,6 +26,11 @@ export default abstract class BaseCommand {
         );
     }
 
+    getData(): any {
+        return new SlashCommandBuilder()
+            .setName(this.getName().toLowerCase())
+            .setDescription(this.getDescription());
+    }
     abstract run(
         client: DiscordClient,
         message: Message,

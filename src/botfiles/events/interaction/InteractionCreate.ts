@@ -10,7 +10,6 @@ export default class InteractionCreateEvent extends BaseEvent {
         if (!interaction.isCommand()) return;
 
         const command = client.commands.get(interaction.commandName);
-        console.log(interaction.commandName);
         if (!command) return;
 
         try {
