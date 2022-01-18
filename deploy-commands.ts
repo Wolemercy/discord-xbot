@@ -6,7 +6,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 const { BOT_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
-
+console.log({ BOT_TOKEN, CLIENT_ID, GUILD_ID });
 let commands: any = [];
 let done = false;
 const extractCommands = async (dir = '/src/botfiles/commands') => {
@@ -34,7 +34,6 @@ const extractCommands = async (dir = '/src/botfiles/commands') => {
         console.error(error);
     } finally {
         try {
-            console.log(commands);
             console.log('Started refreshing application (/) commands.', commands);
             const rest = new REST({ version: '9' }).setToken(BOT_TOKEN);
             await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {

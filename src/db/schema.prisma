@@ -39,7 +39,7 @@ model Server {
   owner        User             @relation(fields: [dOwnerId], references: [dClientId])
   name         String
   settings     ServerSetting?
-  guildMatches ServerUserMatch?
+  guildMatches ServerUserMatch[]
   matches      Match?
   modules      ServerModule?
   createdAt    DateTime         @default(now())
@@ -84,7 +84,7 @@ model Match {
 
 model ServerUserMatch {
   id             Int      @id @default(autoincrement())
-  dGuildId       String   @unique
+  dGuildId       String   
   xBotServer     Server   @relation(fields: [dGuildId], references: [dGuildId])
   dUserId        String
   dUserMatchedId String
