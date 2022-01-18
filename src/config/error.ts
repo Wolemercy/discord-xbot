@@ -10,12 +10,14 @@ class BaseError extends Error {
     description: string;
     httpCode: number;
     isOperational: boolean;
+    status: string;
     constructor(description: string, httpCode: number, isOperational: boolean) {
         super(description);
         this.description = description;
         Object.setPrototypeOf(this, new.target.prototype);
         this.httpCode = httpCode;
         this.isOperational = isOperational;
+        this.status = `${httpCode}`.startsWith('4') ? 'fail' : 'error';
         Error.captureStackTrace(this);
     }
 }
@@ -33,7 +35,11 @@ class APIError extends BaseError {
 }
 
 class UnauthorizedError extends BaseError {
-    constructor(description = 'The request lacks valid authentication credentials', httpCode = 401, isOperational = true) {
+    constructor(
+        description = 'The request lacks valid authentication credentials',
+        httpCode = 401,
+        isOperational = true
+    ) {
         super(description, httpCode, isOperational);
     }
 }
@@ -47,7 +53,8 @@ class ErrorHandler {
     async handleError(err: Error) {
         if (!this.isTrustedError(err)) {
             logger.fatal('Error message: ', err);
-            process.exit(1);
+            // FIXME: Check this and what should be done if the error is not trusted.
+            // process.exit(1);
         }
         logger.info('Error message', err);
     }
