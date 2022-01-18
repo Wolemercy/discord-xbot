@@ -8,7 +8,6 @@ const { Routes } = require('discord-api-types/v9');
 const { BOT_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 console.log({ BOT_TOKEN, CLIENT_ID, GUILD_ID });
 let commands: any = [];
-let done = false;
 const extractCommands = async (dir = '/src/botfiles/commands') => {
     const filePath = path.join(__dirname, dir);
     const files = await fs.readdir(filePath);
@@ -24,7 +23,6 @@ const extractCommands = async (dir = '/src/botfiles/commands') => {
             commands.push(command.getData().toJSON());
         }
     }
-    done = true;
 };
 
 (async () => {

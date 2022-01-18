@@ -20,7 +20,12 @@ const db = new PrismaClient();
 const NAMESPACE = 'app.ts';
 
 const client = new DiscordClient({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGES]
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MEMBERS
+    ]
 });
 // redis cache
 // const cache = createClient();
