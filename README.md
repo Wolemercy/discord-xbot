@@ -15,8 +15,8 @@ A Discord Bot
 -   Run `npx prisma db seed` to seed the databae
 -   Run `npm run dev` to start the development server
 -   If you create a new command in the `command` directory, you'd need to register with discord API/
-    To do this, run `npx ts-node deploy-commands.ts`. This will register the new command in the
-    discord server.
+    To do this, run `npx ts-node ./src/deploy-commands.ts`. This will register the new command in
+    the discord server.
 -   Happy hacking!.
 
 ## Important links
