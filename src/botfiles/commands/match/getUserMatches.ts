@@ -3,17 +3,23 @@ import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { db, cache } from '../../../app';
+import logger from '../../../config/logger';
 const { PAGINATION_COUNT } = process.env;
 
-export default class GetAllMatchesCommand extends BaseCommand {
+export default class GetUserMatchesCommand extends BaseCommand {
     constructor() {
-        super('matchuser', 'match', ['matchuser']);
+        super(
+            'matchUser',
+            'match',
+            ['matchuser'],
+            `Returns a list of your last 20 historical matches.`
+        );
     }
 
     getData() {
         return new SlashCommandBuilder()
             .setName(this.getName().toLowerCase())
-            .setDescription(`Returns a list of your last 20 historical matches.`)
+            .setDescription(this.getDescription())
             .addNumberOption((option) =>
                 option
                     .setName('page')
@@ -31,7 +37,7 @@ export default class GetAllMatchesCommand extends BaseCommand {
         const cacheKey = `SUM-${interaction.user.id}`;
         try {
             const pageNo = interaction.options.getNumber('page');
-            // retrieves user match from the cache
+            // retrieves user's historical matches from the cache
             let userMatches = await cache.lrange(cacheKey, 1, -1);
             let dbMatches;
             // if the matches don't exist in cache
@@ -102,8 +108,20 @@ export default class GetAllMatchesCommand extends BaseCommand {
             await interaction.reply({
                 embeds: [embed]
             });
+
+            logger.info(
+                `${
+                    interaction.user.username
+                } successfully used the ${this.getName().toLowerCase()} COMMAND`
+            );
         } catch (error: any) {
             console.log(error);
+            logger.error(
+                `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by ${
+                    interaction.user.username
+                }:`,
+                error
+            );
             throw new Error(error.message);
         }
     }
