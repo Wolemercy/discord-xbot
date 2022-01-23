@@ -110,15 +110,15 @@ export default class GetUserMatchesCommand extends BaseCommand {
             });
 
             logger.info(
-                `${
-                    interaction.user.username
+                `User ${
+                    interaction.user.id
                 } successfully used the ${this.getName().toLowerCase()} COMMAND`
             );
         } catch (error: any) {
             console.log(error);
             logger.error(
-                `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by ${
-                    interaction.user.username
+                `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by User ${
+                    interaction.user.id
                 }:`,
                 error
             );

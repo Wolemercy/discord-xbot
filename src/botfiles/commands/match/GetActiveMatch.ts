@@ -38,7 +38,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
                                 equals: String(interaction.guildId)
                             },
                             isMatchActive: {
-                                equals: Boolean(false)
+                                equals: true
                             }
                         }
                     }
@@ -84,15 +84,15 @@ export default class GetActiveMatchCommand extends BaseCommand {
                 embeds: [embed]
             });
             logger.info(
-                `${
-                    interaction.user.username
+                `User ${
+                    interaction.user.id
                 } successfully used the ${this.getName().toLowerCase()} COMMAND`
             );
         } catch (error: any) {
             console.log(error);
             logger.error(
-                `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by ${
-                    interaction.user.username
+                `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by User ${
+                    interaction.user.id
                 }:`,
                 error
             );
