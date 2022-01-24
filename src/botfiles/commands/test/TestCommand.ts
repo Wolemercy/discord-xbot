@@ -7,6 +7,11 @@ export default class TestCommand extends BaseCommand {
     constructor() {
         super('test', 'testing', ['test']);
     }
+    getData() {
+        return new SlashCommandBuilder()
+            .setName(this.getName().toLowerCase())
+            .setDescription(this.getDescription());
+    }
 
     async run(client: DiscordClient, message: Message, args: Array<string>) {
         message.channel.send('Test command works');

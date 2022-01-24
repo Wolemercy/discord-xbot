@@ -125,9 +125,6 @@ CREATE UNIQUE INDEX "Match_serverOwnerId_key" ON "Match"("serverOwnerId");
 CREATE UNIQUE INDEX "Match_serverId_key" ON "Match"("serverId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ServerUserMatch_dGuildId_key" ON "ServerUserMatch"("dGuildId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "ServerModule_dGuildId_key" ON "ServerModule"("dGuildId");
 
 -- CreateIndex
