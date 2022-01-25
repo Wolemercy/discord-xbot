@@ -2,7 +2,7 @@ import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
 import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { db, cache } from '../../../app';
+import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
 const { PAGINATION_COUNT } = process.env;
 

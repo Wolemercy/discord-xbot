@@ -2,7 +2,7 @@
 import { Guild } from 'discord.js';
 import BaseEvent from '../utils/structures/BaseEvent';
 import DiscordClient from '../client/client';
-import { db, cache } from '../../app';
+import { db, cache } from '../../config/storage';
 import logger from '../../config/logger';
 
 const NAMESPACE = 'GuildCreateEvent';

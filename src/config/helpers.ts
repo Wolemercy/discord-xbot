@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 import { UserParams } from '../@types/user';
-import { db } from '../app';
+import { db } from '../config/storage';
 import DiscordConfig from './discord';
 import { APIError } from './error';
 import logger from './logger';

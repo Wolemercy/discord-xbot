@@ -11,7 +11,6 @@ import axios, { AxiosRequestConfig } from 'axios';
 import url from 'url';
 import CryptoJS from 'crypto-js';
 import { axiosConfig, Utils } from './helpers';
-import { db } from '../app';
 import { APIError } from './error';
 import logger from './logger';
 

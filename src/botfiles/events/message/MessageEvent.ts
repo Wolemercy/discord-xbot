@@ -1,7 +1,7 @@
 import BaseEvent from '../../utils/structures/BaseEvent';
 import { Message } from 'discord.js';
 import DiscordClient from '../../client/client';
-import { cache } from '../../../app';
+import { cache } from '../../../config/storage';
 import { ServerSetting } from '@prisma/client';
 export default class MessageEvent extends BaseEvent {
     constructor() {

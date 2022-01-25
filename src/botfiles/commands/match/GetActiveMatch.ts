@@ -2,7 +2,7 @@ import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
 import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { db, cache } from '../../../app';
+import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
 
 export default class GetActiveMatchCommand extends BaseCommand {
@@ -21,6 +21,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
     }
     async execute(interaction: CommandInteraction): Promise<void> {
         const cacheKey = `SAUM-${interaction.user.id}`;
+        console.log(cacheKey);
         try {
             // retrieve user's active matches from the cache
             let userMatches = await cache.lrange(cacheKey, 1, -1);

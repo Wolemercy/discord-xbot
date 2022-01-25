@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { cache, db } from '../../app';
+import { cache, db } from '../../config/storage';
 import DiscordConfig from '../../config/discord';
 import { APIError, UnauthorizedError } from '../../config/error';
 import SessionConfig from '../../config/session';

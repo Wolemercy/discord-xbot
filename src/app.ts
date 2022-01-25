@@ -16,8 +16,8 @@ import { registerCommands, registerEvents } from './botfiles/utils/registry';
 import DiscordClient from './botfiles/client/client';
 import { Tedis } from 'tedis';
 import bree from './bree';
+import { db } from './config/storage';
 
-const db = new PrismaClient();
 const NAMESPACE = 'app.ts';
 
 const client = new DiscordClient({
@@ -30,10 +30,6 @@ const client = new DiscordClient({
 });
 // redis cache
 // const cache = createClient();
-const cache = new Tedis({
-    host: '127.0.0.1',
-    port: 6379
-});
 
 const app: Application = express();
 const { BOT_TOKEN, PORT, SESSION_SECRET, SESSION_NAME } = process.env;
@@ -154,5 +150,3 @@ process.on('uncaughtException', (error) => {
     logger.info('Uncaught Exception', error.message);
     errorHandler.handleError(error);
 });
-
-export { cache, db };
