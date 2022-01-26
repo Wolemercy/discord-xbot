@@ -27,17 +27,17 @@ const { BOT_TOKEN } = process.env;
     for (const match of matches) {
         const nextMatchDate = Utils.formatDate(match.nextMatchDate);
         if (aDayBefore === nextMatchDate) {
-            const exist = (await client.channels.fetch(MATCHCHANNELID)) as TextChannel;
+            const channel = (await client.channels.fetch(MATCHCHANNELID)) as TextChannel;
             const cacheKey = `SUMPOOL-${match.serverId}`;
-            if (exist) {
+            if (channel) {
                 await cache.sadd(cacheKey, '');
-                await exist.send(
+                await channel.send(
                     `Howdy learners. A new pairing would occur tomorrow. To enter the pool, call command "/matchadd me". Remember, you can only miss two pairings. Any entry after "10pm" today would not be entered into the pool. See ya and may the force by with you!`
                 );
             }
         } else if (theDay === nextMatchDate) {
             // Notify AWS LAMBDA to start matching candidates.
-            console.log('I logged mod');
+            console.log('I logged where LAMBDA SHOULD BE CALLED');
         }
     }
 

@@ -133,7 +133,8 @@ app.listen(PORT, async () => {
     logger.info(`Server listening on http://localhost:${PORT}/`);
     try {
         await botLogin();
-        await bree.start();
+        // TODO: COMMENT THIS OUT TO START SCHEDULER
+        // await bree.start();
         // await cache.connect();
     } catch (err) {
         logger.info('Error', err);

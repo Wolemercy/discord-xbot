@@ -6,7 +6,8 @@ import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
 import { Utils } from '../../../config/helpers';
 
-const poolExpiryHour = 13;
+// FIXME: CONSIDER MAKING THIS AN ENVIRONMENT VARIABLE
+const poolExpiryHour = 22;
 
 export default class MatchAddCommand extends BaseCommand {
     constructor() {
