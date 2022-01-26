@@ -63,6 +63,6 @@ export class Utils {
     }
 
     static formatDate(date: Date) {
-        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
     }
 }

@@ -24,16 +24,15 @@ const { BOT_TOKEN } = process.env;
     const theDay = Utils.formatDate(today);
     today.setDate(new Date().getDate() - 1);
     const aDayBefore = Utils.formatDate(today);
-    console.log(matches);
     for (const match of matches) {
         const nextMatchDate = Utils.formatDate(match.nextMatchDate);
         if (aDayBefore === nextMatchDate) {
             const exist = (await client.channels.fetch(MATCHCHANNELID)) as TextChannel;
             const cacheKey = `SUMPOOL-${match.serverId}`;
             if (exist) {
-                cache.lpush(cacheKey, '');
+                await cache.sadd(cacheKey, '');
                 await exist.send(
-                    `Howdy learners. A new pairing would occur tomorrow. To enter the pool, call command "/matchAdd me". Remember, you can only miss two pairings. Any entry after "10pm" today would not be entered into the pool. See ya and may the force by with you!`
+                    `Howdy learners. A new pairing would occur tomorrow. To enter the pool, call command "/matchadd me". Remember, you can only miss two pairings. Any entry after "10pm" today would not be entered into the pool. See ya and may the force by with you!`
                 );
             }
         } else if (theDay === nextMatchDate) {
