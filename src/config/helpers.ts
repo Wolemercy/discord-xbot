@@ -61,4 +61,8 @@ export class Utils {
             throw new APIError(err);
         }
     }
+
+    static formatDate(date: Date) {
+        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    }
 }

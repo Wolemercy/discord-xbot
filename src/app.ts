@@ -17,17 +17,18 @@ import DiscordClient from './botfiles/client/client';
 import { Tedis } from 'tedis';
 import bree from './bree';
 import { db } from './config/storage';
+import client from './botfiles/client';
 
 const NAMESPACE = 'app.ts';
 
-const client = new DiscordClient({
-    intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS
-    ]
-});
+// const client = new DiscordClient({
+//     intents: [
+//         Intents.FLAGS.GUILDS,
+//         Intents.FLAGS.DIRECT_MESSAGES,
+//         Intents.FLAGS.GUILD_MESSAGES,
+//         Intents.FLAGS.GUILD_MEMBERS
+//     ]
+// });
 // redis cache
 // const cache = createClient();
 
@@ -131,8 +132,8 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
 app.listen(PORT, async () => {
     logger.info(`Server listening on http://localhost:${PORT}/`);
     try {
-        await bree.start();
         await botLogin();
+        await bree.start();
         // await cache.connect();
     } catch (err) {
         logger.info('Error', err);
