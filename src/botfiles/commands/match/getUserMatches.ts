@@ -4,6 +4,8 @@ import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
+import { Utils } from '../../../config/helpers';
+
 const { PAGINATION_COUNT } = process.env;
 
 export default class GetUserMatchesCommand extends BaseCommand {
@@ -94,7 +96,7 @@ export default class GetUserMatchesCommand extends BaseCommand {
             }
             returnedValue = returnedValue.map((rv) => JSON.parse(rv));
             returnedValue.forEach((rv) => {
-                embed.addField(`Matched on ${rv.matchDate}`, rv.name);
+                embed.addField(`Matched on ${Utils.formatDate(new Date(rv.matchDate))}`, rv.name);
             });
 
             embed.setDescription(`

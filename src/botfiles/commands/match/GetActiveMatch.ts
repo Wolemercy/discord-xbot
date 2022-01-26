@@ -4,6 +4,7 @@ import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
+import { Utils } from '../../../config/helpers';
 
 export default class GetActiveMatchCommand extends BaseCommand {
     constructor() {
@@ -76,7 +77,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
             returnedValue = userMatches.slice(0);
             returnedValue = returnedValue.map((rv) => JSON.parse(rv));
             returnedValue.forEach((rv) => {
-                embed.addField(`Matched on ${rv.matchDate}`, rv.name);
+                embed.addField(`Matched on ${Utils.formatDate(new Date(rv.matchDate))}`, rv.name);
             });
 
             embed.setDescription(`A list of all your current active matches`);
