@@ -1,10 +1,12 @@
 require('dotenv').config(); // imports the .env file to process.env
-import { parentPort, workerData } from 'worker_threads';
+import { parentPort } from 'worker_threads';
 import { db, cache } from 'src/config/storage';
 import { Utils } from 'src/config/helpers';
 import client from 'src/botfiles/client';
 import { registerCommands, registerEvents } from '../botfiles/utils/registry';
-import { Message, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
+import { Lambda } from '@aws-sdk/client-lambda';
+import logger from 'src/config/logger';
 
 // TODO: ADD MATCHCHANNEL TO MATCH TABLE.
 // TODO: CHANGE serverId to dGuildId on Match table
@@ -36,6 +38,32 @@ const { BOT_TOKEN } = process.env;
                 );
             }
         } else if (theDay === nextMatchDate) {
+            // try {
+            //     const lambdaClient = new Lambda({
+            //         credentials: {
+            //             accessKeyId: '',
+            //             secretAccessKey: ''
+            //         },
+            //         region: ''
+            //     });
+
+            //     const invocationConfig = {
+            //         FunctionName: '',
+            //         InvocationType: 'Event',
+            //         Payload: new TextEncoder().encode(JSON.stringify({ guildId: match.serverId }))
+            //     };
+
+            //     const invokationResult = await lambdaClient.invoke(invocationConfig);
+            //     console.log(invokationResult);
+            //     logger.info(
+            //         `Successfully invoked lambda function to perform matches for match-date ${nextMatchDate}`
+            //     );
+            // } catch (error) {
+            //     logger.error(
+            //         `Failed to invoke lambda function to perform matches for match-date ${nextMatchDate}`,
+            //         error
+            //     );
+            // }
             // Notify AWS LAMBDA to start matching candidates.
             console.log('I logged where LAMBDA SHOULD BE CALLED');
         }
