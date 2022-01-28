@@ -60,8 +60,22 @@ export default class GetActiveMatchCommand extends BaseCommand {
                                     matchDate: dbMatch.createdAt
                                 })
                             );
-
+                            const serverMatch = await db.match.findFirst({
+                                where: {
+                                    serverId: interaction.guild.id
+                                }
+                            });
                             await cache.rpush(cacheKey, '', ...userMatches);
+                            if (serverMatch) {
+                                await cache.expireat(
+                                    cacheKey,
+                                    serverMatch?.nextMatchDate.valueOf() / 1000
+                                );
+                            } else {
+                                const aDayToGo = new Date();
+                                aDayToGo.setDate(aDayToGo.getDate() + 1);
+                                await cache.expireat(cacheKey, aDayToGo.valueOf() / 1000);
+                            }
                         }
                     }
                 }
