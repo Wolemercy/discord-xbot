@@ -62,9 +62,14 @@ export default class MatchAddCommand extends BaseCommand {
                 const today = new Date();
                 const theDay = Utils.formatDate(today);
                 today.setDate(new Date().getDate() - 1);
-                const aDayBefore = Utils.formatDate(today);
-
-                if (aDayBefore === Utils.formatDate(serverToBeMatched.nextMatchDate)) {
+                const nextMatchDate = Utils.formatDate(serverToBeMatched.nextMatchDate);
+                serverToBeMatched.nextMatchDate.setDate(
+                    serverToBeMatched.nextMatchDate.getDate() - 1
+                );
+                const aDayBeforeMatchDate = Utils.formatDate(
+                    new Date(serverToBeMatched.nextMatchDate)
+                );
+                if (theDay === aDayBeforeMatchDate) {
                     if (today.getHours() >= poolExpiryHour) {
                         await interaction.reply(
                             `Oops, the allowed time to enter the pool has expired. You missed this draft soldier 😭😭😭. Remember, missing more than 2 rounds is an offence punishable by kicking out 💣  ⚔️!`
@@ -74,7 +79,7 @@ export default class MatchAddCommand extends BaseCommand {
                                 interaction.user.id
                             } used the ${this.getName().toLowerCase()} COMMAND. User:${
                                 interaction.user.id
-                            } missed matching pool of ${serverToBeMatched.nextMatchDate}`
+                            } missed matching pool of ${nextMatchDate}`
                         );
                         return;
                     } else {
