@@ -62,7 +62,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
                             );
                             const serverMatch = await db.match.findFirst({
                                 where: {
-                                    serverId: interaction.guild.id
+                                    dGuidId: interaction.guild.id
                                 }
                             });
 

@@ -22,7 +22,7 @@ class BOTController {
         } else {
             const serverMatched = await db.match.findFirst({
                 where: {
-                    serverId: String(id)
+                    dGuidId: String(id)
                 }
             });
 
@@ -31,7 +31,9 @@ class BOTController {
                     `Namespace:[${NAMESPACE}.matchResponder]: No match found for serverId ${id} in match table.`
                 );
             } else {
-                const channel = (await client.channels.fetch(MATCHCHANNELID)) as TextChannel;
+                const channel = (await client.channels.fetch(
+                    serverMatched.matchChannelId
+                )) as TextChannel;
                 const embed = new MessageEmbed()
                     .setTitle(`New learning matches.`)
                     .setColor('RANDOM')

@@ -75,7 +75,7 @@ export default class GetUserMatchesCommand extends BaseCommand {
 
                             const serverMatch = await db.match.findFirst({
                                 where: {
-                                    serverId: interaction.guild.id
+                                    dGuidId: interaction.guild.id
                                 }
                             });
                             await cache.rpush(cacheKey, '', ...userMatches);

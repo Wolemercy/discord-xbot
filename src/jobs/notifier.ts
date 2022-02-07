@@ -21,7 +21,13 @@ const { BOT_TOKEN } = process.env;
     await registerCommands(client, '../commands');
     await registerEvents(client, '../events');
     await client.login(BOT_TOKEN);
-    const matches = await db.match.findMany();
+    const matches = await db.match.findMany({
+        where: {
+            status: {
+                in: ['ACTIVE', 'FAILED']
+            }
+        }
+    });
     const today = new Date();
     const theDay = Utils.formatDate(today);
     for (const match of matches) {
@@ -30,8 +36,8 @@ const { BOT_TOKEN } = process.env;
         const aDayBeforeMatchDate = Utils.formatDate(new Date(match.nextMatchDate));
 
         if (theDay === aDayBeforeMatchDate) {
-            const channel = (await client.channels.fetch(MATCHCHANNELID)) as TextChannel;
-            const cacheKey = `SUMPOOL-${match.serverId}`;
+            const channel = (await client.channels.fetch(match.matchChannelId)) as TextChannel;
+            const cacheKey = `SUMPOOL-${match.dGuidId}`;
             if (channel) {
                 await cache.sadd(cacheKey, '');
                 await channel.send(
