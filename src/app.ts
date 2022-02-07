@@ -66,8 +66,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-// TODO: error handler
-
 app.use(
     expressSession({
         cookie: {

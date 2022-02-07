@@ -6,9 +6,7 @@ import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
 import { Utils } from '../../../config/helpers';
 
-// FIXME: CONSIDER MAKING THIS AN ENVIRONMENT VARIABLE
-const poolExpiryHour = 22;
-
+const { POOL_EXPIRY_HOUR } = process.env;
 export default class MatchAddCommand extends BaseCommand {
     constructor() {
         super('matchAdd', 'match', ['matchadd'], 'Adds you to the pool for pairing.');
@@ -70,7 +68,7 @@ export default class MatchAddCommand extends BaseCommand {
                     new Date(serverToBeMatched.nextMatchDate)
                 );
                 if (theDay === aDayBeforeMatchDate) {
-                    if (today.getHours() >= poolExpiryHour) {
+                    if (today.getHours() >= Number(POOL_EXPIRY_HOUR)) {
                         await interaction.reply(
                             `Oops, the allowed time to enter the pool has expired. You missed this draft soldier 😭😭😭. Remember, missing more than 2 rounds is an offence punishable by kicking out 💣  ⚔️!`
                         );

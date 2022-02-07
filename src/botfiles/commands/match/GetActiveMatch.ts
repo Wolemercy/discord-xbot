@@ -65,16 +65,21 @@ export default class GetActiveMatchCommand extends BaseCommand {
                                     serverId: interaction.guild.id
                                 }
                             });
+
                             await cache.rpush(cacheKey, '', ...userMatches);
+                            console.log('I ran 1');
                             if (serverMatch) {
                                 await cache.expireat(
                                     cacheKey,
-                                    serverMatch?.nextMatchDate.valueOf() / 1000
+                                    Math.floor(serverMatch.nextMatchDate.valueOf() / 1000)
                                 );
                             } else {
                                 const aDayToGo = new Date();
                                 aDayToGo.setDate(aDayToGo.getDate() + 1);
-                                await cache.expireat(cacheKey, aDayToGo.valueOf() / 1000);
+                                await cache.expireat(
+                                    cacheKey,
+                                    Math.floor(aDayToGo.valueOf() / 1000)
+                                );
                             }
                         }
                     }
@@ -110,7 +115,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
                 `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by User ${
                     interaction.user.id
                 }:`,
-                error
+                error.message
             );
             throw new Error(error.message);
         }

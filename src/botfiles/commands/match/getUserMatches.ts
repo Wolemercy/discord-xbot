@@ -82,12 +82,15 @@ export default class GetUserMatchesCommand extends BaseCommand {
                             if (serverMatch) {
                                 await cache.expireat(
                                     cacheKey,
-                                    serverMatch?.nextMatchDate.valueOf() / 1000
+                                    Math.floor(serverMatch?.nextMatchDate.valueOf() / 1000)
                                 );
                             } else {
                                 const aDayToGo = new Date();
                                 aDayToGo.setDate(aDayToGo.getDate() + 1);
-                                await cache.expireat(cacheKey, aDayToGo.valueOf() / 1000);
+                                await cache.expireat(
+                                    cacheKey,
+                                    Math.floor(aDayToGo.valueOf() / 1000)
+                                );
                             }
                         }
                     }
@@ -101,7 +104,6 @@ export default class GetUserMatchesCommand extends BaseCommand {
                 .setColor('BLUE');
             let returnedValue;
             if (pageNo === 1) {
-                console.log('Isiisis', userMatches.length);
                 returnedValue = userMatches.slice(0, Number(PAGINATION_COUNT));
             } else {
                 returnedValue = userMatches.slice(
@@ -132,12 +134,11 @@ export default class GetUserMatchesCommand extends BaseCommand {
                 } successfully used the ${this.getName().toLowerCase()} COMMAND`
             );
         } catch (error: any) {
-            console.log(error);
             logger.error(
                 `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by User ${
                     interaction.user.id
                 }:`,
-                error
+                error.message
             );
             throw new Error(error.message);
         }

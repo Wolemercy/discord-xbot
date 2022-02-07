@@ -23,3 +23,23 @@ A Discord Bot
 
 -   [Redis client](https://tedis.silkjs.org/api/)
 -   [Prisma Docs](https://www.prisma.io/docs/)
+
+## Todos
+
+-   CONSIDER MAKING THIS AN ENVIRONMENT VARIABLE in matchAdd (Temi)(done)
+-   Check this and what should be done if the error is not trusted. in error.ts (Temi)
+-   THIS FIELD SHOULD BE ACCESSED FROM THE MATCH RESPONSE in index.controller of bot (Temi)
+-   ADD MATCHCHANNEL TO MATCH TABLE in notifier.ts (Temi)
+-   CHANGE serverId to dGuildId on Match table in notifier.ts (Temi)
+-   Only retrieve matches that have status Active. We can create another job that polls to check if
+    any nextMatchDate is in the past when status is not paused. This tells us that the worker failed
+    to work properly in notifier.ts (Temi)
+-   COMMENT THIS OUT TO START SCHEDULER in app.ts (Temi)
+-   Deploy Lambda function and grant it internet access. (Wole)
+-   Fix Lambda commented code in notifier file (Wole)
+
+-   Make final db schema changes (Temi)
+-   Setup deployment environment (done)
+-   Test the application (All)
+-   Add all environment variables to config vars in heroku (Wole)
+-   Delete pool from cache after matching (Wole)
