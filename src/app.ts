@@ -16,7 +16,7 @@ import { registerCommands, registerEvents } from './botfiles/utils/registry';
 import DiscordClient from './botfiles/client/client';
 import { Tedis } from 'tedis';
 import bree from './bree';
-import { db } from './config/storage';
+import { db, cache } from './config/storage';
 import client from './botfiles/client';
 
 const NAMESPACE = 'app.ts';
@@ -125,6 +125,10 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
             }
         });
     }
+});
+
+cache.on('error', (err) => {
+    errorHandler.handleError(err);
 });
 
 app.listen(PORT, async () => {
