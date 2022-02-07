@@ -83,6 +83,52 @@ export default class GuildCreateEvent extends BaseEvent {
                     guildId: guild.id
                 }
             );
+
+            const channels = await guild.channels.fetch();
+            let generalChannel = channels.find(
+                (channel) =>
+                    channel.name.toLowerCase() === 'general' && channel.type === 'GUILD_TEXT'
+            );
+
+            if (!generalChannel) {
+                generalChannel = await guild.channels.create('general', {
+                    reason: 'General Channel needed for xBot to work',
+                    type: 'GUILD_TEXT'
+                });
+            }
+
+            const setMatchRecord = await db.match.create({
+                data: {
+                    status: 'PAUSED',
+                    dGuidId: guild.id,
+                    serverOwnerId: guild.ownerId,
+                    matchFrequency: 7,
+                    lastMatchDate: new Date(),
+                    nextMatchDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+                    matchChannelId: generalChannel.id
+                }
+            });
+            if (setMatchRecord) {
+                (await (await guild.fetchOwner()).createDM()).send(
+                    `Successfully created module to match users in your server. Matching won't occur until you make it active.`
+                );
+                logger.info(
+                    `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} match record created with status set to PAUSED.`,
+                    {
+                        guildId: guild.id
+                    }
+                );
+            } else {
+                logger.error(
+                    `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} match record not created.`,
+                    {
+                        guildId: guild.id
+                    }
+                );
+                (await (await guild.fetchOwner()).createDM()).send(
+                    `xBot server config wasn't configured. Please login to your dashboard and configure the settings. xBot may not work well without this setup. Thank you. `
+                );
+            }
         } catch (error: any) {
             logger.error(
                 `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} config could not be created.`,
