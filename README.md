@@ -47,3 +47,4 @@ A Discord Bot
 -   Add all environment variables to config vars in heroku (Wole)
 -   Delete pool from cache after matching (Wole)
 -   Check this and what should be done if the error is not trusted. in error.ts (Temi)
+-   URGENT -> Add server and config to database if config found in cache in GuildCreateEvent (Temi)

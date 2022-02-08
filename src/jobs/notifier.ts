@@ -13,8 +13,6 @@ import logger from 'src/config/logger';
 // TODO: Only retrieve matches that have status Active. We can create another job that polls
 // to check if any nextMatchDate is in the past when status is not paused. This tells us that the worker failed to work properly.
 
-const MATCHCHANNELID = '931198576984469548';
-
 const { BOT_TOKEN } = process.env;
 
 (async () => {

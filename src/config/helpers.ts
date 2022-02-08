@@ -1,10 +1,11 @@
+import { ServerSetting } from '@prisma/client';
 import { AxiosRequestConfig } from 'axios';
 import { UserParams } from '../@types/user';
 import { db } from '../config/storage';
 import DiscordConfig from './discord';
 import { APIError } from './error';
 import logger from './logger';
-
+import { Guild } from 'discord.js';
 const NAMESPACE = 'Util';
 export const axiosConfig: AxiosRequestConfig = {
     headers: {
@@ -64,5 +65,39 @@ export class Utils {
 
     static formatDate(date: Date) {
         return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+    }
+
+    static async createOrUpdateServerSetting(guild: Guild) {
+        try {
+            const server = await db.server.upsert({
+                where: {
+                    dGuildId: guild.id
+                },
+                update: {
+                    dGuildId: guild.id,
+                    dOwnerId: guild.ownerId,
+                    name: guild.name
+                },
+                create: {
+                    dGuildId: guild.id,
+                    dOwnerId: guild.ownerId,
+                    name: guild.name
+                }
+            });
+
+            const serverConfig = await db.serverSetting.upsert({
+                where: {
+                    dGuildId: guild.id
+                },
+                update: {},
+                create: {
+                    dGuildId: guild.id
+                }
+            });
+
+            return serverConfig;
+        } catch (error: any) {
+            throw new Error(error.message);
+        }
     }
 }

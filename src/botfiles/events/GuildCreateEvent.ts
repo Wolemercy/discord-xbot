@@ -4,6 +4,7 @@ import BaseEvent from '../utils/structures/BaseEvent';
 import DiscordClient from '../client/client';
 import { db, cache } from '../../config/storage';
 import logger from '../../config/logger';
+import { Utils } from '../../config/helpers';
 
 const NAMESPACE = 'GuildCreateEvent';
 export default class GuildCreateEvent extends BaseEvent {
@@ -15,7 +16,9 @@ export default class GuildCreateEvent extends BaseEvent {
         logger.info(`xBot Joined ${guild.name} guild`);
 
         try {
+            // retrieve server config from cache
             let serverConfig = (await cache.get(guild.id)) as any;
+            // server config not found meaning it's a new server
             if (!serverConfig) {
                 logger.info(
                     `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} config not found in cache.`,
@@ -23,80 +26,39 @@ export default class GuildCreateEvent extends BaseEvent {
                         guildId: guild.id
                     }
                 );
-                let server = await db.server.findFirst({
-                    where: {
-                        dGuildId: guild.id
-                    }
-                });
-
-                if (!server) {
-                    logger.info(
-                        `${NAMESPACE}.run: New guild (server) with dGuildId:${guild.id} added xBot.`,
-                        {
-                            guildId: guild.id
-                        }
-                    );
-                    logger.info(
-                        `${NAMESPACE}.run: Adding record in DB for new guild (server) with dGuildId:${guild.id}.`,
-                        {
-                            guildId: guild.id
-                        }
-                    );
-                    server = await db.server.create({
-                        data: {
-                            dGuildId: guild.id,
-                            dOwnerId: guild.ownerId,
-                            name: guild.name
-                        }
-                    });
-                    logger.info(
-                        `${NAMESPACE}.run: New guild (server) with dGuildId:${guild.id} added to db.`,
-                        {
-                            guildId: guild.id
-                        }
-                    );
-                    logger.info(
-                        `${NAMESPACE}.run: New guild (server) config with dGuildId:${guild.id} added to db.`,
-                        {
-                            guildId: guild.id
-                        }
-                    );
-                }
-
-                serverConfig = await db.serverSetting.create({
-                    data: {
-                        dGuildId: server.dGuildId
-                    }
-                });
-
-                await cache.set(guild.id, JSON.stringify(serverConfig));
+            } else {
                 logger.info(
-                    `${NAMESPACE}.run: New guild (server) config with dGuildId:${guild.id} added to cache.`,
+                    `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} config found in cache.`,
                     {
                         guildId: guild.id
                     }
                 );
             }
+            // create or update server and server setting for this guild
+            serverConfig = await Utils.createOrUpdateServerSetting(guild);
+            // add or updates it to the cache
+            await cache.set(guild.id, JSON.stringify(serverConfig));
             logger.info(
-                `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} config found in cache.`,
+                `${NAMESPACE}.run: New guild (server) config with dGuildId:${guild.id} added/updated in cache.`,
                 {
                     guildId: guild.id
                 }
             );
-
+            // retrieves all this guild's current channel
             const channels = await guild.channels.fetch();
+            // finds the desired channel
             let generalChannel = channels.find(
                 (channel) =>
-                    channel.name.toLowerCase() === 'general' && channel.type === 'GUILD_TEXT'
+                    channel.name.toLowerCase() === 'general-one' && channel.type === 'GUILD_TEXT'
             );
-
+            // creates it if not found
             if (!generalChannel) {
-                generalChannel = await guild.channels.create('general', {
+                generalChannel = await guild.channels.create('general-one', {
                     reason: 'General Channel needed for xBot to work',
                     type: 'GUILD_TEXT'
                 });
             }
-
+            // creates a record for matches
             const setMatchRecord = await db.match.create({
                 data: {
                     status: 'PAUSED',
@@ -108,6 +70,7 @@ export default class GuildCreateEvent extends BaseEvent {
                     matchChannelId: generalChannel.id
                 }
             });
+            // successfully created
             if (setMatchRecord) {
                 (await (await guild.fetchOwner()).createDM()).send(
                     `Successfully created module to match users in your server. Matching won't occur until you make it active.`
@@ -118,7 +81,9 @@ export default class GuildCreateEvent extends BaseEvent {
                         guildId: guild.id
                     }
                 );
-            } else {
+            }
+            // unsuccessfully created
+            else {
                 logger.error(
                     `${NAMESPACE}.run: Guild (server) with dGuildId:${guild.id} match record not created.`,
                     {
