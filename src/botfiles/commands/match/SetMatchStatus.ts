@@ -9,18 +9,22 @@ import { Utils } from '../../../config/helpers';
 const { POOL_EXPIRY_HOUR } = process.env;
 export default class SetMatchStatus extends BaseCommand {
     constructor() {
-        super('setMatchStatus', 'match', ['setmatchstatus'], 'Sets the status of a match.');
+        super('setMatchStatus', 'match', ['setmatchstatus'], 'Sets the status of a match.', [
+            'ADMINISTRATOR'
+        ]);
     }
 
     getData() {
         return new SlashCommandBuilder()
             .setName(this.getName().toLowerCase())
             .setDescription(this.getDescription())
-            .addStringOption((option) =>
-                option.addChoices([
-                    ['status', 'Active'],
-                    ['status', 'Paused']
-                ])
+            .addStringOption((opt) =>
+                opt
+                    .setName('status')
+                    .setDescription('Active | Pause')
+                    .addChoice('active', 'active')
+                    .addChoice('pause', 'pause')
+                    .setRequired(true)
             )
             .setDefaultPermission(false);
     }
@@ -30,6 +34,7 @@ export default class SetMatchStatus extends BaseCommand {
     }
     async execute(interaction: CommandInteraction): Promise<void> {
         try {
+            interaction.reply('I should not be running');
         } catch (error: any) {
             console.log(error);
             logger.error(

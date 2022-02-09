@@ -43,4 +43,5 @@ const extractCommands = async (dir = '/botfiles/commands') => {
             console.error(error);
         }
     }
+    process.exit(0);
 })();
