@@ -2,7 +2,7 @@ import { Lambda } from '@aws-sdk/client-lambda';
 import logger from '../config/logger';
 import { Utils } from '../config/helpers';
 
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_LAMBDA_FUNCTION_NAME } =
+const { GUILD_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_LAMBDA_FUNCTION_NAME } =
     process.env;
 
 async function test_trigger() {
@@ -19,7 +19,7 @@ async function test_trigger() {
         const invocationConfig = {
             FunctionName: AWS_LAMBDA_FUNCTION_NAME!,
             InvocationType: 'Event',
-            Payload: new TextEncoder().encode(JSON.stringify({ guildId: '931198576984469545' }))
+            Payload: new TextEncoder().encode(JSON.stringify({ guildId: GUILD_ID }))
         };
 
         const invokationResult = await lambdaClient.invoke(invocationConfig);
