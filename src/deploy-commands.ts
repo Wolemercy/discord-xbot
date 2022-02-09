@@ -6,7 +6,6 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 const { BOT_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
-console.log({ BOT_TOKEN, CLIENT_ID, GUILD_ID });
 let commands: any = [];
 const extractCommands = async (dir = '/botfiles/commands') => {
     const filePath = path.join(__dirname, dir);

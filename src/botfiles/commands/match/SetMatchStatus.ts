@@ -34,7 +34,49 @@ export default class SetMatchStatus extends BaseCommand {
     }
     async execute(interaction: CommandInteraction): Promise<void> {
         try {
-            interaction.reply('I should not be running');
+            const option = interaction.options.getString('status');
+            const dbMatch = await db.match.findFirst({
+                where: {
+                    dGuildId: interaction.guildId!
+                }
+            });
+            if (!dbMatch) {
+                return await interaction.reply(
+                    'Cannot find a match record for your server. Please contact the bot developer for assistance <sewb.dev@gmail.com>'
+                );
+            }
+            if (dbMatch.status === 'PAUSED' && option === 'pause') {
+                return await interaction.reply(
+                    'This server has already paused matching. To activate matches, select active.'
+                );
+            } else {
+                const inTwoDays = new Date(new Date().setDate(new Date().getDate() + 2));
+                await db.match.update({
+                    where: {
+                        id: dbMatch.id
+                    },
+                    data: {
+                        status: 'ACTIVE',
+                        nextMatchDate: inTwoDays
+                    }
+                });
+
+                logger.info(
+                    `User ${
+                        interaction.user.id
+                    } successfully used the ${this.getName().toLowerCase()} COMMAND`
+                );
+                logger.info(
+                    `User with id: ${
+                        interaction.user.id
+                    } has activated matching for guild with id ${
+                        interaction.guildId
+                    } on ${new Date().toDateString()}`
+                );
+                return await interaction.reply(
+                    'You have successfully activated matching for this server. Pool entry will begin tomorrow and matching will occur after. Thank you. '
+                );
+            }
         } catch (error: any) {
             console.log(error);
             logger.error(
