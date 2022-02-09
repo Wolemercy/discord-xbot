@@ -34,6 +34,9 @@ A Discord Bot
 -   CHANGE serverId to dGuildId on Match table in notifier.ts (Temi)(done)
 -   Make final db schema changes (Temi)(done)
 -   Setup deployment environment (done)
+-   Deploy Lambda function and grant it internet access. (Wole) (done)
+-   Fix Lambda commented code in notifier file (Wole) (Done)
+-   Delete pool from cache after matching (Wole) (Done)
 
 ### Pending
 
@@ -41,9 +44,6 @@ A Discord Bot
     any nextMatchDate is in the past when status is not paused. This tells us that the worker failed
     to work properly in notifier.ts (Temi)
 -   COMMENT THIS OUT TO START SCHEDULER in app.ts (Temi)
--   Deploy Lambda function and grant it internet access. (Wole)
--   Fix Lambda commented code in notifier file (Wole)
 -   Test the application (All)
 -   Add all environment variables to config vars in heroku (Wole)
--   Delete pool from cache after matching (Wole)
 -   Check this and what should be done if the error is not trusted. in error.ts (Temi)
