@@ -15,7 +15,13 @@ import logger from 'src/config/logger';
 
 const MATCHCHANNELID = '931198576984469548';
 
-const { BOT_TOKEN } = process.env;
+const {
+    BOT_TOKEN,
+    AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY,
+    AWS_REGION,
+    AWS_LAMBDA_FUNCTION_NAME
+} = process.env;
 
 (async () => {
     await registerCommands(client, '../commands');
@@ -45,34 +51,37 @@ const { BOT_TOKEN } = process.env;
                 );
             }
         } else if (theDay === nextMatchDate) {
-            // try {
-            //     const lambdaClient = new Lambda({
-            //         credentials: {
-            //             accessKeyId: '',
-            //             secretAccessKey: ''
-            //         },
-            //         region: ''
-            //     });
+            try {
+                const lambdaClient = new Lambda({
+                    credentials: {
+                        accessKeyId: AWS_ACCESS_KEY_ID!,
+                        secretAccessKey: AWS_SECRET_ACCESS_KEY!
+                    },
+                    region: AWS_REGION!
+                });
 
-            //     const invocationConfig = {
-            //         FunctionName: '',
-            //         InvocationType: 'Event',
-            //         Payload: new TextEncoder().encode(JSON.stringify({ guildId: match.serverId }))
-            //     };
+                const invocationConfig = {
+                    FunctionName: AWS_LAMBDA_FUNCTION_NAME!,
+                    InvocationType: 'Event',
+                    Payload: new TextEncoder().encode(JSON.stringify({ guildId: match.dGuidId }))
+                };
 
-            //     const invokationResult = await lambdaClient.invoke(invocationConfig);
-            //     console.log(invokationResult);
-            //     logger.info(
-            //         `Successfully invoked lambda function to perform matches for match-date ${nextMatchDate}`
-            //     );
-            // } catch (error) {
-            //     logger.error(
-            //         `Failed to invoke lambda function to perform matches for match-date ${nextMatchDate}`,
-            //         error
-            //     );
-            // }
+                const invokationResult = await lambdaClient.invoke(invocationConfig);
+                console.log(invokationResult);
+                logger.info(
+                    `Successfully invoked lambda function to perform matches for match-date ${nextMatchDate}`
+                );
+            } catch (error) {
+                console.log(
+                    `Failed to invoke lambda function to perform matches for match-date ${nextMatchDate}`,
+                    error
+                );
+                // logger.error(
+                //     `Failed to invoke lambda function to perform matches for match-date ${nextMatchDate}`,
+                //     error
+                // );
+            }
             // Notify AWS LAMBDA to start matching candidates.
-            console.log('I logged where LAMBDA SHOULD BE CALLED');
         }
     }
 
