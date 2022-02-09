@@ -62,7 +62,7 @@ export default class GuildCreateEvent extends BaseEvent {
             const setMatchRecord = await db.match.create({
                 data: {
                     status: 'PAUSED',
-                    dGuidId: guild.id,
+                    dGuildId: guild.id,
                     serverOwnerId: guild.ownerId,
                     matchFrequency: 7,
                     lastMatchDate: new Date(),

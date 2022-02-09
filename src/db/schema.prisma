@@ -71,9 +71,9 @@ model ServerSetting {
 model Match {
   id             Int          @id @default(autoincrement())
   serverOwnerId  String       @unique
-  dGuidId       String       @unique
+  dGuildId       String       @unique
   xBotUser       User         @relation(fields: [serverOwnerId], references: [dClientId])
-  xBotServer     Server       @relation(fields: [dGuidId], references: [dGuildId])
+  xBotServer     Server       @relation(fields: [dGuildId], references: [dGuildId])
   lastMatchDate  DateTime
   nextMatchDate  DateTime
   matchChannelId String @default("")

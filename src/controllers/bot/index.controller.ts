@@ -22,7 +22,7 @@ class BOTController {
         } else {
             const serverMatched = await db.match.findFirst({
                 where: {
-                    dGuidId: String(id)
+                    dGuildId: String(id)
                 }
             });
 

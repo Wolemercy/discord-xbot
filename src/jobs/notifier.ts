@@ -41,7 +41,7 @@ const {
 
         if (theDay === aDayBeforeMatchDate) {
             const channel = (await client.channels.fetch(match.matchChannelId)) as TextChannel;
-            const cacheKey = `SUMPOOL-${match.dGuidId}`;
+            const cacheKey = `SUMPOOL-${match.dGuildId}`;
             if (channel) {
                 await cache.sadd(cacheKey, '');
                 await channel.send(
@@ -61,7 +61,7 @@ const {
                 const invocationConfig = {
                     FunctionName: AWS_LAMBDA_FUNCTION_NAME!,
                     InvocationType: 'Event',
-                    Payload: new TextEncoder().encode(JSON.stringify({ guildId: match.dGuidId }))
+                    Payload: new TextEncoder().encode(JSON.stringify({ guildId: match.dGuildId }))
                 };
 
                 const invokationResult = await lambdaClient.invoke(invocationConfig);

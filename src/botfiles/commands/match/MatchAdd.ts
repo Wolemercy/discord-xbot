@@ -51,7 +51,7 @@ export default class MatchAddCommand extends BaseCommand {
             }
             const serverToBeMatched = await db.match.findFirst({
                 where: {
-                    dGuidId: {
+                    dGuildId: {
                         equals: interaction.guildId
                     }
                 }
