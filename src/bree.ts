@@ -4,10 +4,10 @@ import path from 'path';
 Bree.extend(require('@breejs/ts-worker'));
 
 const { TS_NODE } = process.env;
-
+const extention = TS_NODE ? (TS_NODE === 'true' ? 'ts' : 'js') : 'js';
 const bree = new Bree({
     root: path.join(__dirname, 'jobs'),
-    defaultExtension: Boolean(TS_NODE) ? 'ts' : 'js',
+    defaultExtension: extention,
     jobs: [
         // 'job',
         {

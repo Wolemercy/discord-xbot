@@ -67,3 +67,4 @@ xBotDBData/
 redis/
 
 .DS_Store
+/build/*

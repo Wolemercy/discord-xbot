@@ -7,7 +7,7 @@
         "start": "node build/app.js",
         "dev": "nodemon src/app.ts",
         "devWindows": "nodemon --exec npx ts-node src/app.ts",
-        "build": "rm -rf build/ && prettier --write src/ && tsc && pwd && ls -a",
+        "build": "rm -rf build/ && prettier --write src/ && tsc",
         "prepare": "husky install",
         "test_trigger": "nodemon src/jobs/test_trigger.ts",
         "scheduler": "node build/bree.js"
