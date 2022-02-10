@@ -12,7 +12,7 @@ const bree = new Bree({
         // 'job',
         {
             name: 'notifier',
-            interval: 'every day at 6 am'
+            interval: 'every day at 3 am and 6 am'
         }
     ],
     acceptedExtensions: ['.ts', '.js']

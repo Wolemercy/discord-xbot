@@ -9,7 +9,8 @@
         "devWindows": "nodemon --exec npx ts-node src/app.ts",
         "build": "rm -rf build/ && prettier --write src/ && tsc",
         "prepare": "husky install",
-        "test_trigger": "nodemon src/jobs/test_trigger.ts"
+        "test_trigger": "nodemon src/jobs/test_trigger.ts",
+        "scheduler": "node build/bree.js"
     },
     "repository": {
         "type": "git",
