@@ -5,7 +5,7 @@ import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './@types/errors';
 import cookieParser from 'cookie-parser';
-import getRoutes from '../src/routes';
+import getRoutes from './routes/';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import SessionConfig from './config/session';
