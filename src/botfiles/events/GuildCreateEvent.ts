@@ -49,11 +49,11 @@ export default class GuildCreateEvent extends BaseEvent {
             // finds the desired channel
             let generalChannel = channels.find(
                 (channel) =>
-                    channel.name.toLowerCase() === 'general-one' && channel.type === 'GUILD_TEXT'
+                    channel.name.toLowerCase() === 'general' && channel.type === 'GUILD_TEXT'
             );
             // creates it if not found
             if (!generalChannel) {
-                generalChannel = await guild.channels.create('general-one', {
+                generalChannel = await guild.channels.create('general', {
                     reason: 'General Channel needed for xBot to work',
                     type: 'GUILD_TEXT'
                 });

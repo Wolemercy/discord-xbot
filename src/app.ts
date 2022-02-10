@@ -4,33 +4,17 @@ import express, { Application, Response, Request, NextFunction } from 'express';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './@types/errors';
-import { Intents } from 'discord.js';
-import { createClient } from 'redis';
-import { PrismaClient } from '@prisma/client';
 import cookieParser from 'cookie-parser';
 import getRoutes from '../src/routes';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import SessionConfig from './config/session';
 import { registerCommands, registerEvents } from './botfiles/utils/registry';
-import DiscordClient from './botfiles/client/client';
-import { Tedis } from 'tedis';
-import bree from './bree';
+// import bree from './bree';
 import { db, cache } from './config/storage';
 import client from './botfiles/client';
 
 const NAMESPACE = 'app.ts';
-
-// const client = new DiscordClient({
-//     intents: [
-//         Intents.FLAGS.GUILDS,
-//         Intents.FLAGS.DIRECT_MESSAGES,
-//         Intents.FLAGS.GUILD_MESSAGES,
-//         Intents.FLAGS.GUILD_MEMBERS
-//     ]
-// });
-// redis cache
-// const cache = createClient();
 
 const app: Application = express();
 const { BOT_TOKEN, PORT, SESSION_SECRET, SESSION_NAME } = process.env;
@@ -70,10 +54,10 @@ app.use(
     expressSession({
         cookie: {
             // maxAge: 7 * 24 * 60 * 60 * 1000 // ms,
-            maxAge: 3600000 * 24
+            maxAge: 3600000 * 24,
             //   httpOnly: true,
             //   sameSite: true,
-            //   secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === 'production'
         },
         secret: SESSION_SECRET!,
         name: SESSION_NAME,
@@ -136,7 +120,7 @@ app.listen(PORT, async () => {
     try {
         await botLogin();
         // TODO: COMMENT THIS OUT TO START SCHEDULER
-        // await bree.start();
+        // bree.start();
         // await cache.connect();
     } catch (err) {
         logger.info('Error', err);

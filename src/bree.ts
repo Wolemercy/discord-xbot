@@ -3,16 +3,20 @@ import Bree from 'bree';
 import path from 'path';
 Bree.extend(require('@breejs/ts-worker'));
 
+const { TS_NODE } = process.env;
+
 const bree = new Bree({
     root: path.join(__dirname, 'jobs'),
-    defaultExtension: process.env.TS_NODE ? 'ts' : 'js',
+    defaultExtension: Boolean(TS_NODE) ? 'ts' : 'js',
     jobs: [
         // 'job',
         {
-            name: 'notifier'
+            name: 'notifier',
+            interval: 'every day at 6 am'
         }
     ],
     acceptedExtensions: ['.ts', '.js']
 });
 
-export default bree;
+bree.start();
+// export default bree;
