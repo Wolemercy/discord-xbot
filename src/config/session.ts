@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { db } from '../app';
+import { db } from '../config/storage';
 import { User } from '../@types/user';
 import cookieParser from 'cookie-parser';
 import logger from './logger';

@@ -4,35 +4,17 @@ import express, { Application, Response, Request, NextFunction } from 'express';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './@types/errors';
-import { Intents } from 'discord.js';
-import { createClient } from 'redis';
-import { PrismaClient } from '@prisma/client';
 import cookieParser from 'cookie-parser';
 import getRoutes from '../src/routes';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import SessionConfig from './config/session';
 import { registerCommands, registerEvents } from './botfiles/utils/registry';
-import DiscordClient from './botfiles/client/client';
-import { Tedis } from 'tedis';
+// import bree from './bree';
+import { db, cache } from './config/storage';
+import client from './botfiles/client';
 
-const db = new PrismaClient();
 const NAMESPACE = 'app.ts';
-
-const client = new DiscordClient({
-    intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS
-    ]
-});
-// redis cache
-// const cache = createClient();
-const cache = new Tedis({
-    host: '127.0.0.1',
-    port: 6379
-});
 
 const app: Application = express();
 const { BOT_TOKEN, PORT, SESSION_SECRET, SESSION_NAME } = process.env;
@@ -68,16 +50,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-// TODO: error handler
-
 app.use(
     expressSession({
         cookie: {
             // maxAge: 7 * 24 * 60 * 60 * 1000 // ms,
-            maxAge: 3600000 * 24
+            maxAge: 3600000 * 24,
             //   httpOnly: true,
             //   sameSite: true,
-            //   secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === 'production'
         },
         secret: SESSION_SECRET!,
         name: SESSION_NAME,
@@ -104,40 +84,11 @@ app.all('*', (req, res, next) => {
     });
 });
 
-// client.on('ready', () => {
-//     logger.info(`Logged in as ${client?.user?.tag}!`);
-//     new WOKCommands(client, {
-//         // The name of the local folder for your command files
-//         commandsDir: path.join(__dirname, 'botfiles/commands'),
-//         // Allow importing of .ts files if you are using ts-node
-//         typeScript: true
-//     });
-// });
-
-// client.on('messageCreate', (msg) => {
-//     if (msg.author.bot) {
-//         return;
-//     }
-//     logger.info(msg.content);
-//     if (msg.content == 'ping') {
-//         msg.reply('pong')
-//             .then(() => {
-//                 logger.info('replied');
-//             })
-//             .catch(logger.error);
-//     }
-// });
-
 const botLogin = async () => {
     await registerCommands(client, '../commands');
     await registerEvents(client, '../events');
     await client.login(BOT_TOKEN);
 };
-
-// cache.on('error', (err) => console.log('Redis cache Error', err));
-// cache.on('connect', function () {
-//     logger.info('Cache connected! successfully');
-// });
 
 app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
     logger.info(`Namespace:[${NAMESPACE} global error handler: ${err.message}`);
@@ -160,10 +111,16 @@ app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
     }
 });
 
+cache.on('error', (err) => {
+    errorHandler.handleError(err);
+});
+
 app.listen(PORT, async () => {
     logger.info(`Server listening on http://localhost:${PORT}/`);
     try {
         await botLogin();
+        // TODO: COMMENT THIS OUT TO START SCHEDULER
+        // bree.start();
         // await cache.connect();
     } catch (err) {
         logger.info('Error', err);
@@ -181,5 +138,3 @@ process.on('uncaughtException', (error) => {
     logger.info('Uncaught Exception', error.message);
     errorHandler.handleError(error);
 });
-
-export { cache, db };

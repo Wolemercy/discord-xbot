@@ -6,6 +6,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { BOT_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
+const commandsArray = [];
 export async function registerCommands(client: DiscordClient, dir: string = '') {
     const filePath = path.join(__dirname, dir);
     const files = await fs.readdir(filePath);
@@ -19,6 +20,7 @@ export async function registerCommands(client: DiscordClient, dir: string = '') 
             command.getAliases().forEach((alias: string) => {
                 client.commands.set(alias, command);
             });
+            commandsArray.push(command);
         }
     }
 }

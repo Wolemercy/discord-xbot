@@ -6,7 +6,8 @@ export default abstract class BaseCommand {
         private name: string,
         private category: string,
         private aliases: Array<string>,
-        private description?: string
+        private description?: string,
+        private permissions?: string[]
     ) {}
 
     getName(): string {
@@ -23,6 +24,9 @@ export default abstract class BaseCommand {
             this.description ||
             `A wonderful description for the command with name:${this.getName()}`
         );
+    }
+    getPermissions(): string[] {
+        return this.permissions ?? [];
     }
 
     abstract run(

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "MATCH_STATUS" AS ENUM ('SUCCESS', 'PAUSED', 'FAILED');
+CREATE TYPE "MATCH_STATUS" AS ENUM ('ACTIVE', 'PAUSED', 'FAILED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -69,9 +69,10 @@ CREATE TABLE "ServerSetting" (
 CREATE TABLE "Match" (
     "id" SERIAL NOT NULL,
     "serverOwnerId" TEXT NOT NULL,
-    "serverId" TEXT NOT NULL,
+    "dGuildId" TEXT NOT NULL,
     "lastMatchDate" TIMESTAMP(3) NOT NULL,
     "nextMatchDate" TIMESTAMP(3) NOT NULL,
+    "matchChannelId" TEXT NOT NULL DEFAULT E'',
     "matchFrequency" INTEGER NOT NULL DEFAULT 7,
     "status" "MATCH_STATUS" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -122,7 +123,7 @@ CREATE UNIQUE INDEX "ServerSetting_dGuildId_key" ON "ServerSetting"("dGuildId");
 CREATE UNIQUE INDEX "Match_serverOwnerId_key" ON "Match"("serverOwnerId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Match_serverId_key" ON "Match"("serverId");
+CREATE UNIQUE INDEX "Match_dGuildId_key" ON "Match"("dGuildId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ServerModule_dGuildId_key" ON "ServerModule"("dGuildId");
@@ -140,7 +141,7 @@ ALTER TABLE "ServerSetting" ADD CONSTRAINT "ServerSetting_dGuildId_fkey" FOREIGN
 ALTER TABLE "Match" ADD CONSTRAINT "Match_serverOwnerId_fkey" FOREIGN KEY ("serverOwnerId") REFERENCES "User"("dClientId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Match" ADD CONSTRAINT "Match_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("dGuildId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Match" ADD CONSTRAINT "Match_dGuildId_fkey" FOREIGN KEY ("dGuildId") REFERENCES "Server"("dGuildId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ServerUserMatch" ADD CONSTRAINT "ServerUserMatch_dGuildId_fkey" FOREIGN KEY ("dGuildId") REFERENCES "Server"("dGuildId") ON DELETE RESTRICT ON UPDATE CASCADE;

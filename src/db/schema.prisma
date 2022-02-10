@@ -71,11 +71,12 @@ model ServerSetting {
 model Match {
   id             Int          @id @default(autoincrement())
   serverOwnerId  String       @unique
-  serverId       String       @unique
+  dGuildId       String       @unique
   xBotUser       User         @relation(fields: [serverOwnerId], references: [dClientId])
-  xBotServer     Server       @relation(fields: [serverId], references: [dGuildId])
+  xBotServer     Server       @relation(fields: [dGuildId], references: [dGuildId])
   lastMatchDate  DateTime
   nextMatchDate  DateTime
+  matchChannelId String @default("")
   matchFrequency Int          @default(7)
   status         MATCH_STATUS
   createdAt      DateTime     @default(now())
@@ -106,7 +107,7 @@ model ServerModule {
 }
 
 enum MATCH_STATUS {
-  SUCCESS
+  ACTIVE
   PAUSED
   FAILED
 }

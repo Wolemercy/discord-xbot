@@ -2,8 +2,10 @@ import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
 import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { db, cache } from '../../../app';
+import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
+import { Utils } from '../../../config/helpers';
+
 const { PAGINATION_COUNT } = process.env;
 
 export default class GetUserMatchesCommand extends BaseCommand {
@@ -71,7 +73,25 @@ export default class GetUserMatchesCommand extends BaseCommand {
                                 })
                             );
 
+                            const serverMatch = await db.match.findFirst({
+                                where: {
+                                    dGuildId: interaction.guild.id
+                                }
+                            });
                             await cache.rpush(cacheKey, '', ...userMatches);
+                            if (serverMatch) {
+                                await cache.expireat(
+                                    cacheKey,
+                                    Math.floor(serverMatch?.nextMatchDate.valueOf() / 1000)
+                                );
+                            } else {
+                                const aDayToGo = new Date();
+                                aDayToGo.setDate(aDayToGo.getDate() + 1);
+                                await cache.expireat(
+                                    cacheKey,
+                                    Math.floor(aDayToGo.valueOf() / 1000)
+                                );
+                            }
                         }
                     }
                 }
@@ -84,7 +104,6 @@ export default class GetUserMatchesCommand extends BaseCommand {
                 .setColor('BLUE');
             let returnedValue;
             if (pageNo === 1) {
-                console.log('Isiisis', userMatches.length);
                 returnedValue = userMatches.slice(0, Number(PAGINATION_COUNT));
             } else {
                 returnedValue = userMatches.slice(
@@ -94,7 +113,7 @@ export default class GetUserMatchesCommand extends BaseCommand {
             }
             returnedValue = returnedValue.map((rv) => JSON.parse(rv));
             returnedValue.forEach((rv) => {
-                embed.addField(`Matched on ${rv.matchDate}`, rv.name);
+                embed.addField(`Matched on ${Utils.formatDate(new Date(rv.matchDate))}`, rv.name);
             });
 
             embed.setDescription(`
@@ -115,12 +134,11 @@ export default class GetUserMatchesCommand extends BaseCommand {
                 } successfully used the ${this.getName().toLowerCase()} COMMAND`
             );
         } catch (error: any) {
-            console.log(error);
             logger.error(
                 `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by User ${
                     interaction.user.id
                 }:`,
-                error
+                error.message
             );
             throw new Error(error.message);
         }

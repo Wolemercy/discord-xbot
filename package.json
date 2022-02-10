@@ -8,7 +8,9 @@
         "dev": "nodemon src/app.ts",
         "devWindows": "nodemon --exec npx ts-node src/app.ts",
         "build": "rm -rf build/ && prettier --write src/ && tsc",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "test_trigger": "nodemon src/jobs/test_trigger.ts",
+        "scheduler": "node build/bree.js"
     },
     "repository": {
         "type": "git",
@@ -22,12 +24,15 @@
     },
     "homepage": "https://github.com/Wolemercy/discord-xbot#readme",
     "dependencies": {
+        "@aws-sdk/client-lambda": "^3.48.0",
+        "@breejs/ts-worker": "^1.1.1",
         "@discordjs/builders": "^0.11.0",
         "@discordjs/rest": "^0.2.0-canary.0",
         "@prisma/client": "^3.7.0",
         "@quixo3/prisma-session-store": "^3.1.2",
         "axios": "^0.24.0",
         "body-parser": "^1.19.1",
+        "bree": "^7.1.5",
         "cookie-parser": "^1.4.6",
         "crypto-js": "^4.1.1",
         "discord-api-types": "^0.26.1",

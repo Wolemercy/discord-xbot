@@ -2,8 +2,9 @@ import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
 import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { db, cache } from '../../../app';
+import { db, cache } from '../../../config/storage';
 import logger from '../../../config/logger';
+import { Utils } from '../../../config/helpers';
 
 export default class GetActiveMatchCommand extends BaseCommand {
     constructor() {
@@ -21,6 +22,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
     }
     async execute(interaction: CommandInteraction): Promise<void> {
         const cacheKey = `SAUM-${interaction.user.id}`;
+        console.log(cacheKey);
         try {
             // retrieve user's active matches from the cache
             let userMatches = await cache.lrange(cacheKey, 1, -1);
@@ -58,8 +60,27 @@ export default class GetActiveMatchCommand extends BaseCommand {
                                     matchDate: dbMatch.createdAt
                                 })
                             );
+                            const serverMatch = await db.match.findFirst({
+                                where: {
+                                    dGuildId: interaction.guild.id
+                                }
+                            });
 
                             await cache.rpush(cacheKey, '', ...userMatches);
+                            console.log('I ran 1');
+                            if (serverMatch) {
+                                await cache.expireat(
+                                    cacheKey,
+                                    Math.floor(serverMatch.nextMatchDate.valueOf() / 1000)
+                                );
+                            } else {
+                                const aDayToGo = new Date();
+                                aDayToGo.setDate(aDayToGo.getDate() + 1);
+                                await cache.expireat(
+                                    cacheKey,
+                                    Math.floor(aDayToGo.valueOf() / 1000)
+                                );
+                            }
                         }
                     }
                 }
@@ -75,7 +96,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
             returnedValue = userMatches.slice(0);
             returnedValue = returnedValue.map((rv) => JSON.parse(rv));
             returnedValue.forEach((rv) => {
-                embed.addField(`Matched on ${rv.matchDate}`, rv.name);
+                embed.addField(`Matched on ${Utils.formatDate(new Date(rv.matchDate))}`, rv.name);
             });
 
             embed.setDescription(`A list of all your current active matches`);
@@ -94,7 +115,7 @@ export default class GetActiveMatchCommand extends BaseCommand {
                 `An error occured in the use of ${this.getName().toLowerCase()} COMMAND by User ${
                     interaction.user.id
                 }:`,
-                error
+                error.message
             );
             throw new Error(error.message);
         }
