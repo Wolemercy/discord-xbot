@@ -72,8 +72,6 @@ app.use(
 );
 app.use(SessionConfig.deserializeSession);
 app.use('/api/', getRoutes());
-// create the server
-// const server = http.createServer(app);
 
 app.all('*', (req, res, next) => {
     res.status(404).json({
