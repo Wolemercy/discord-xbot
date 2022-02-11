@@ -37,16 +37,23 @@ A Discord Bot
 -   Deploy Lambda function and grant it internet access. (Wole) (done)
 -   Fix Lambda commented code in notifier file (Wole) (Done)
 -   Delete pool from cache after matching (Wole) (Done)
+-   URGENT -> Add server and config to database if config found in cache in GuildCreateEvent
+    (Temi)(done)
+-   COMMENT THIS OUT TO START SCHEDULER in app.ts (Temi) (done)
+-   Create command to set match to active Temi (done)
 
 ### Pending
 
 -   Only retrieve matches that have status Active. We can create another job that polls to check if
     any nextMatchDate is in the past when status is not paused. This tells us that the worker failed
     to work properly in notifier.ts (Temi)
--   COMMENT THIS OUT TO START SCHEDULER in app.ts (Temi)
 -   Test the application (All)
 -   Add all environment variables to config vars in heroku (Wole)
 -   Check this and what should be done if the error is not trusted. in error.ts (Temi)
--   URGENT -> Add server and config to database if config found in cache in GuildCreateEvent
-    (Temi)(done)
--   Create command to set match to active
+
+### Future consideration
+
+-   Create command to allow admin to reset match (could be date only or/and historical matches)
+-   Create feature to enable setting guild reminders
+-   Create feature to enable admins put everyone into a pool at once
+-   Create feature to enable computer science trivias
