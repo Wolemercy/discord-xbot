@@ -49,6 +49,10 @@ export default class SetMatchStatus extends BaseCommand {
                 return await interaction.reply(
                     'This server has already paused matching. To activate matches, select active.'
                 );
+            } else if (dbMatch.status === 'ACTIVE' && option === 'active') {
+                return await interaction.reply(
+                    `This server has already activated matching. Next match will occur on ${dbMatch.nextMatchDate.toDateString()}.`
+                );
             } else {
                 const inTwoDays = new Date(new Date().setDate(new Date().getDate() + 2));
                 await db.match.update({
