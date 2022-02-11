@@ -13,8 +13,8 @@ const bree = new Bree({
         {
             name: 'notifier',
             // timeout: '1s',
-            interval: 'every 30 seconds'
-            // interval: 'every day at 3 am and 6 am'
+            // interval: 'every 30 seconds'
+            interval: 'every day at 3 am and 6 am'
         }
     ],
     acceptedExtensions: ['.ts', '.js']
