@@ -20,7 +20,7 @@ model User {
   dRefreshToken String
   isPremium     Boolean  @default(false)
   servers       Server[]
-  matches       Match?
+  matches       Match[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -70,7 +70,7 @@ model ServerSetting {
 
 model Match {
   id             Int          @id @default(autoincrement())
-  serverOwnerId  String       @unique
+  serverOwnerId  String       
   dGuildId       String       @unique
   xBotUser       User         @relation(fields: [serverOwnerId], references: [dClientId])
   xBotServer     Server       @relation(fields: [dGuildId], references: [dGuildId])
