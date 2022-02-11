@@ -34,7 +34,7 @@ const extractCommands = async (dir = '/botfiles/commands') => {
             console.log('Started refreshing application (/) commands.', commands);
             const rest = new REST({ version: '9' }).setToken(BOT_TOKEN);
             if (NODE_ENV === 'production') {
-                await rest.put(Routes.applicationGuildCommands(CLIENT_ID), {
+                await rest.put(Routes.applicationCommands(CLIENT_ID), {
                     body: commands
                 });
             } else {
