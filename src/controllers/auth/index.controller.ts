@@ -41,13 +41,16 @@ class AuthController {
                 await SessionConfig.serializeSession(req, newUser);
                 return res.status(200).send('Logged in successfully');
             } catch (err: any) {
+                console.log(err);
                 if (err.response && err.response.data) {
+                    console.log('e1', err.response);
                     logger.info(
                         `Namespace:[${NAMESPACE}.discordAuthRedirectHandler]: ${err.response.data.error_description}`,
                         err
                     );
                     return next(new APIError(err.response.data.error_description));
                 } else if (err.request) {
+                    console.log('e2', err.request);
                     logger.info(
                         `Namespace:[${NAMESPACE}.discordAuthRedirectHandler]: Request failed to be completed by axios`,
                         err
@@ -56,7 +59,7 @@ class AuthController {
                         new UnauthorizedError('Your login request failed. Please try again.')
                     );
                 }
-
+                console.log('e3', err);
                 next(err);
             }
         }
