@@ -5,7 +5,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
-const { BOT_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
+const { BOT_TOKEN, CLIENT_ID, GUILD_ID, NODE_ENV } = process.env;
 let commands: any = [];
 const extractCommands = async (dir = '/botfiles/commands') => {
     const filePath = path.join(__dirname, dir);
@@ -33,9 +33,15 @@ const extractCommands = async (dir = '/botfiles/commands') => {
         try {
             console.log('Started refreshing application (/) commands.', commands);
             const rest = new REST({ version: '9' }).setToken(BOT_TOKEN);
-            await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-                body: commands
-            });
+            if (NODE_ENV === 'production') {
+                await rest.put(Routes.applicationGuildCommands(CLIENT_ID), {
+                    body: commands
+                });
+            } else {
+                await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
+                    body: commands
+                });
+            }
 
             console.log('Successfully reloaded application (/) commands.');
         } catch (error) {
