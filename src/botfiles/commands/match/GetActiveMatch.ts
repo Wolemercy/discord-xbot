@@ -25,7 +25,12 @@ export default class GetActiveMatchCommand extends BaseCommand {
         console.log(cacheKey);
         try {
             // retrieve user's active matches from the cache
+            logger.info(`Getting ${interaction.user.id} active match from cache`);
             let userMatches = await cache.lrange(cacheKey, 1, -1);
+            logger.info(`Successfully retrieved ${interaction.user.id} active match from cache`);
+            logger.info(
+                `Here is ${interaction.user.id} active match from the cache: ${userMatches}`
+            );
             let dbMatches;
             // if matches do not exist in the cache
             if (userMatches.length === 0) {
