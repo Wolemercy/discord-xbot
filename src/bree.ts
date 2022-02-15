@@ -15,7 +15,7 @@ const bree = new Bree({
             name: 'notifier',
             // timeout: '1s',
             // interval: 'every 30 seconds'
-            interval: 'at 5:44 pm'
+            interval: 'at 18:12'
         }
     ],
     acceptedExtensions: ['.ts', '.js']
