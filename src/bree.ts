@@ -6,7 +6,6 @@ Bree.extend(require('@breejs/ts-worker'));
 
 const { TS_NODE } = process.env;
 const extention = TS_NODE ? (TS_NODE === 'true' ? 'ts' : 'js') : 'js';
-console.log('----------Bree just started up');
 const bree = new Bree({
     root: path.join(__dirname, 'jobs'),
     defaultExtension: extention,
@@ -16,7 +15,7 @@ const bree = new Bree({
             name: 'notifier',
             // timeout: '1s',
             // interval: 'every 30 seconds'
-            interval: 'at 5:39 pm'
+            interval: 'at 5:44 pm'
         }
     ],
     acceptedExtensions: ['.ts', '.js']

@@ -38,7 +38,6 @@ const {
         const nextMatchDate = Utils.formatDate(match.nextMatchDate);
         match.nextMatchDate.setDate(match.nextMatchDate.getDate() - 1);
         const aDayBeforeMatchDate = Utils.formatDate(new Date(match.nextMatchDate));
-        console.log("----------------we're going in------------------");
         if (theDay === aDayBeforeMatchDate) {
             const channel = (await client.channels.fetch(match.matchChannelId)) as TextChannel;
             const cacheKey = `SUMPOOL-${match.dGuildId}`;
@@ -49,7 +48,6 @@ const {
                 );
             }
         } else if (theDay === nextMatchDate) {
-            console.log('----------------Time to call the matcher------------------');
             try {
                 const lambdaClient = new Lambda({
                     credentials: {
