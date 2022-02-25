@@ -3,6 +3,7 @@ import { Message } from 'discord.js';
 import DiscordClient from '../../client/client';
 import { cache } from '../../../config/storage';
 import { ServerSetting } from '@prisma/client';
+import { registerPermissions } from '../../utils/registry';
 export default class MessageEvent extends BaseEvent {
     constructor() {
         super('messageCreate');
@@ -13,6 +14,7 @@ export default class MessageEvent extends BaseEvent {
         if (message.interaction?.type === 'APPLICATION_COMMAND') {
             console.log('I logged');
         }
+        await registerPermissions(message.guildId!, client);
         let config = (await cache.get(message.guildId!)) as any;
         if (!config) {
             message.channel.send(
