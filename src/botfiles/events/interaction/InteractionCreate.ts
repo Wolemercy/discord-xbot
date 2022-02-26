@@ -1,6 +1,7 @@
 import BaseEvent from '../../utils/structures/BaseEvent';
 import DiscordClient from '../../client/client';
 import { Interaction } from 'discord.js';
+import { registerPermissions } from '../../utils/registry';
 
 export default class InteractionCreateEvent extends BaseEvent {
     constructor() {
@@ -13,6 +14,7 @@ export default class InteractionCreateEvent extends BaseEvent {
         if (!command) return;
 
         try {
+            await registerPermissions(interaction.guildId!, client);
             await command.execute(interaction);
         } catch (error) {
             console.error(error);

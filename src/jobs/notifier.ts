@@ -38,7 +38,6 @@ const {
         const nextMatchDate = Utils.formatDate(match.nextMatchDate);
         match.nextMatchDate.setDate(match.nextMatchDate.getDate() - 1);
         const aDayBeforeMatchDate = Utils.formatDate(new Date(match.nextMatchDate));
-
         if (theDay === aDayBeforeMatchDate) {
             const channel = (await client.channels.fetch(match.matchChannelId)) as TextChannel;
             const cacheKey = `SUMPOOL-${match.dGuildId}`;
