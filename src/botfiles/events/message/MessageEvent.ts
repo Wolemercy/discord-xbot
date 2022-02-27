@@ -14,7 +14,7 @@ export default class MessageEvent extends BaseEvent {
         if (message.interaction?.type === 'APPLICATION_COMMAND') {
             console.log('I logged');
         }
-        await registerPermissions(message.guildId!, client);
+        // await registerPermissions(message.guildId!, client);
         let config = (await cache.get(message.guildId!)) as any;
         if (!config) {
             message.channel.send(

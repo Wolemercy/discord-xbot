@@ -22,7 +22,6 @@ export default class GetActiveMatchCommand extends BaseCommand {
     }
     async execute(interaction: CommandInteraction): Promise<void> {
         const cacheKey = `SAUM-${interaction.user.id}`;
-        await cache.rpush('i', '', 'ooo');
         try {
             // retrieve user's active matches from the cache
             logger.info(`Getting ${interaction.user.id} active match from cache`);
