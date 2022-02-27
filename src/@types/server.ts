@@ -8,4 +8,14 @@ interface ServerSetting {
     updatedAt: string;
 }
 
-export { ServerSetting };
+type RolePermission = {
+    id: string;
+    type: string;
+    permission: boolean;
+};
+type fullPermission = {
+    id: string;
+    permissions: RolePermission[];
+};
+
+export { ServerSetting, RolePermission, fullPermission };
