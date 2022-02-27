@@ -45,7 +45,6 @@ export default class SetMatchStatus extends BaseCommand {
                     'Cannot find a match record for your server. Please contact the bot developer for assistance <sewb.dev@gmail.com>'
                 );
             }
-            console.log(dbMatch.status);
             if (dbMatch.status === 'PAUSED' && option === 'pause') {
                 return await interaction.reply(
                     'This server has already paused matching. To activate matches, select active.'
@@ -54,7 +53,7 @@ export default class SetMatchStatus extends BaseCommand {
                 return await interaction.reply(
                     `This server has already activated matching. Next match will occur on ${dbMatch.nextMatchDate.toDateString()}.`
                 );
-            } else if (dbMatch.status === 'PAUSED' && option === 'active') {
+            } else {
                 const inTwoDays = new Date(new Date().setDate(new Date().getDate() + 2));
                 await db.match.update({
                     where: {
@@ -80,29 +79,6 @@ export default class SetMatchStatus extends BaseCommand {
                 );
                 return await interaction.reply(
                     'You have successfully activated matching for this server. Pool entry will begin tomorrow and matching will occur after. Thank you. '
-                );
-            } else {
-                await db.match.update({
-                    where: {
-                        id: dbMatch.id
-                    },
-                    data: {
-                        status: 'PAUSED'
-                    }
-                });
-
-                logger.info(
-                    `User ${
-                        interaction.user.id
-                    } successfully used the ${this.getName().toLowerCase()} COMMAND`
-                );
-                logger.info(
-                    `User with id: ${interaction.user.id} has paused matching for guild with id ${
-                        interaction.guildId
-                    } on ${new Date().toDateString()}`
-                );
-                return await interaction.reply(
-                    'You have successfully paused matching for this server. '
                 );
             }
         } catch (error: any) {
