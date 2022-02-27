@@ -138,10 +138,10 @@ app.listen(PORT, async () => {
 });
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
-// process.on('unhandledRejection', (error: Error, promise) => {
-//     logger.info('Unhandled Rejection', error.message);
-//     throw error; // will generate an uncaughtException
-// });
+process.on('unhandledRejection', (error: Error, promise) => {
+    logger.info('Unhandled Rejection', error.message);
+    throw error; // will generate an uncaughtException
+});
 
 // Deals with programmer errors by exiting the node application
 process.on('uncaughtException', (error) => {
