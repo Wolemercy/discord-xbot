@@ -44,25 +44,8 @@ export async function registerPermissions(guildId: string, client: DiscordClient
         if (!tempGuild) {
             return;
         }
-        let permissions: RolePermission[] = [];
+        const permissions: RolePermission[] = [];
         const fullPermissions: any[] = [];
-
-        const commands = await client.application?.commands.fetch({
-            guildId: tempGuild.id
-        });
-
-        commands?.forEach(async (cmd) => {
-            const tempCommand = client.commands.get(cmd.name);
-
-            if (tempCommand && tempCommand.getPermissions().length != 0) {
-                fullPermissions.push({
-                    id: cmd.id,
-                    name: cmd.name,
-                    permissions: []
-                });
-            }
-        });
-
         client.commands.forEach(async (command) => {
             if (command.getPermissions().length === 0) return;
             const roles = tempGuild.roles.cache.filter((r) =>
@@ -76,14 +59,20 @@ export async function registerPermissions(guildId: string, client: DiscordClient
                     permission: true
                 });
             });
+        });
+        const commands = await client.application?.commands.fetch({
+            guildId: tempGuild.id
+        });
 
-            const permissionObjectIndex = fullPermissions.findIndex((perm) => {
-                return perm.name === command.getName().toLowerCase();
-            });
-            if (permissionObjectIndex != -1) {
-                fullPermissions[permissionObjectIndex].permissions = [...permissions];
+        commands?.forEach(async (cmd) => {
+            const tempCommand = client.commands.get(cmd.name);
+
+            if (tempCommand && tempCommand.getPermissions().length != 0) {
+                fullPermissions.push({
+                    id: cmd.id,
+                    permissions: [...permissions]
+                });
             }
-            permissions = [];
         });
 
         await tempGuild.commands.permissions.set({

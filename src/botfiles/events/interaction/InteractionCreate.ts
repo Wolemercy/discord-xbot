@@ -14,7 +14,7 @@ export default class InteractionCreateEvent extends BaseEvent {
         if (!command) return;
 
         try {
-            // await registerPermissions(interaction.guildId!, client);
+            await registerPermissions(interaction.guildId!, client);
             await command.execute(interaction);
         } catch (error) {
             console.error(error);
