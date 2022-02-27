@@ -4,6 +4,7 @@ import express, { Application, Response, Request, NextFunction } from 'express';
 import logger from './config/logger';
 import errorHandler from './config/error';
 import { BaseError } from './@types/errors';
+import { monitoring_service } from './config/monitoring';
 import cookieParser from 'cookie-parser';
 import getRoutes from './routes/';
 import expressSession from 'express-session';
@@ -18,6 +19,11 @@ const NAMESPACE = 'app.ts';
 
 const app: Application = express();
 const { BOT_TOKEN, PORT, SESSION_SECRET, SESSION_NAME } = process.env;
+
+/* Initialize monitoring service */
+monitoring_service.initialize();
+app.use(monitoring_service.requestHandler() as express.RequestHandler);
+
 /* LOG THE REQUEST */
 app.use((req: Request, res: Response, next: NextFunction) => {
     logger.info(`METHOD - [${req.method}], URL - [${req.url}], IP - [${req.socket.remoteAddress}]`);
@@ -92,6 +98,8 @@ const botLogin = async () => {
     await client.login(BOT_TOKEN);
 };
 
+app.use(monitoring_service.errorHandler() as express.ErrorRequestHandler);
+
 app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
     logger.info(`Namespace:[${NAMESPACE} global error handler: ${err.message}`);
     errorHandler.handleError(err);
@@ -130,10 +138,10 @@ app.listen(PORT, async () => {
 });
 
 // get the unhandled rejection and throw it to another fallback handler we already have.
-process.on('unhandledRejection', (error: Error, promise) => {
-    logger.info('Unhandled Rejection', error.message);
-    throw error; // will generate an uncaughtException
-});
+// process.on('unhandledRejection', (error: Error, promise) => {
+//     logger.info('Unhandled Rejection', error.message);
+//     throw error; // will generate an uncaughtException
+// });
 
 // Deals with programmer errors by exiting the node application
 process.on('uncaughtException', (error) => {

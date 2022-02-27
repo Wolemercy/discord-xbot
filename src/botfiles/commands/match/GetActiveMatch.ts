@@ -22,12 +22,11 @@ export default class GetActiveMatchCommand extends BaseCommand {
     }
     async execute(interaction: CommandInteraction): Promise<void> {
         const cacheKey = `SAUM-${interaction.user.id}`;
-        console.log(cacheKey);
+        await cache.rpush('i', '', 'ooo');
         try {
             // retrieve user's active matches from the cache
             logger.info(`Getting ${interaction.user.id} active match from cache`);
             let userMatches = await cache.lrange(cacheKey, 1, -1);
-            logger.info(`Successfully retrieved ${interaction.user.id} active match from cache`);
             logger.info(
                 `Here is ${interaction.user.id} active match from the cache: ${userMatches}`
             );
@@ -72,7 +71,6 @@ export default class GetActiveMatchCommand extends BaseCommand {
                             });
 
                             await cache.rpush(cacheKey, '', ...userMatches);
-                            console.log('I ran 1');
                             if (serverMatch) {
                                 await cache.expireat(
                                     cacheKey,
