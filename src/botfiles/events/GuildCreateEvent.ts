@@ -5,6 +5,7 @@ import DiscordClient from '../client/client';
 import { db, cache } from '../../config/storage';
 import logger from '../../config/logger';
 import { Utils } from '../../config/helpers';
+import { registerPermissions } from '../utils/registry';
 
 const NAMESPACE = 'GuildCreateEvent';
 export default class GuildCreateEvent extends BaseEvent {
@@ -18,6 +19,7 @@ export default class GuildCreateEvent extends BaseEvent {
         try {
             // retrieve server config from cache
             let serverConfig = (await cache.get(guild.id)) as any;
+            await registerPermissions(guild.id, client);
             // server config not found meaning it's a new server
             if (!serverConfig) {
                 logger.info(
